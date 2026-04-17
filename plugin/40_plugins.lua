@@ -143,6 +143,11 @@ later(function()
   })
 end)
 
+later(function()
+  add({"https://github.com/nvim-tree/nvim-tree.lua"})
+  require('nvim-tree').setup()
+end)
+
 -- Snippets ===================================================================
 
 -- Although 'mini.snippets' provides functionality to manage snippet files, it
@@ -185,4 +190,4 @@ Config.now(function()
 end)
 
 local colours = require("utils.colors")
-colours.ColorMyPencils("gruber-darker")
+colours.ColorMyPencils("jellybeans")
