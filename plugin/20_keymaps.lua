@@ -251,5 +251,5 @@ nmap_leader('vL', '<Cmd>lua MiniVisits.remove_label()<CR>',       'Remove label'
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 -- Update plugins
-nmap_leader('pu', '<Cmd>lua vim.pack.update()', 'Update all plugins')
+nmap_leader('pu', '<Cmd>lua vim.pack.update()<CR>', 'Update all plugins')
 -- stylua: ignore end
