@@ -7,6 +7,30 @@
 -- These are mostly plugins that provide programming language specific behavior.
 --
 -- Use this file to install and configure other such plugins.
+-- UI2
+require('vim._core.ui2').enable({
+  enable = true, -- Whether to enable or disable the UI.
+  msg = { -- Options related to the message module.
+    ---@type 'cmd'|'msg' Default message target, either in the
+    ---cmdline or in a separate ephemeral message window.
+    ---@type string|table<string, 'cmd'|'msg'|'pager'> Default message target
+    ---or table mapping |ui-messages| kinds and triggers to a target.
+    targets = 'cmd',
+    cmd = { -- Options related to messages in the cmdline window.
+      height = 0.5 -- Maximum height while expanded for messages beyond 'cmdheight'.
+    },
+    dialog = { -- Options related to dialog window.
+      height = 0.5, -- Maximum height.
+    },
+    msg = { -- Options related to msg window.
+      height = 0.5, -- Maximum height.
+      timeout = 4000, -- Time a message is visible in the message window.
+    },
+    pager = { -- Options related to message window.
+      height = 1, -- Maximum height.
+    },
+  },
+})
 
 -- Make concise helpers for installing/adding plugins in two stages
 local add = vim.pack.add
@@ -123,30 +147,6 @@ end)
 -- Neovim has built-in tools for text formatting (see `:h gq` and `:h 'formatprg'`).
 -- They can be used to configure external programs, but it might become tedious.
 --
--- The 'stevearc/conform.nvim' plugin is a good and maintained solution for easier
--- formatting setup.
-later(function()
-  add({ 'https://github.com/stevearc/conform.nvim' })
-
-  -- See also:
-  -- - `:h Conform`
-  -- - `:h conform-options`
-  -- - `:h conform-formatters`
-  require('conform').setup({
-    default_format_opts = {
-      -- Allow formatting from LSP server if no dedicated formatter is available
-      lsp_format = 'fallback',
-    },
-    -- Map of filetype to formatters
-    -- Make sure that necessary CLI tool is available
-    -- formatters_by_ft = { lua = { 'stylua' } },
-  })
-end)
-
-later(function()
-  add({"https://github.com/nvim-tree/nvim-tree.lua"})
-  require('nvim-tree').setup()
-end)
 
 -- Snippets ===================================================================
 
@@ -169,10 +169,10 @@ later(function() add({ 'https://github.com/rafamadriz/friendly-snippets' }) end)
 -- If you need them to work elsewhere, consider using other package managers.
 --
 -- You can use it like so:
-now_if_args(function()
-  add({ 'https://github.com/mason-org/mason.nvim' })
-  require('mason').setup()
-end)
+--now_if_args(function()
+--  add({ 'https://github.com/mason-org/mason.nvim' })
+--  require('mason').setup()
+--end)
 
 -- Beautiful, usable, well maintained color schemes outside of 'mini.nvim' and
 -- have full support of its highlight groups. Use if you don't like 'miniwinter'
@@ -183,11 +183,193 @@ Config.now(function()
     'https://github.com/WTFox/jellybeans.nvim',
     'https://github.com/blazkowolf/gruber-darker.nvim',
     'https://github.com/rebelot/kanagawa.nvim',
-    'https://github.com/alljokecake/naysayer-theme.nvim'
+    'https://github.com/alljokecake/naysayer-theme.nvim',
+    'https://github.com/savq/melange-nvim',
   })
 --   -- Enable only one
 --   vim.cmd('color everforest')
 end)
 
+later(function()
+  add({"https://github.com/nvim-tree/nvim-tree.lua"})
+  require('nvim-tree').setup()
+end)
+
+later(function()
+  add({
+    "https://github.com/nvim-telescope/telescope.nvim",
+    "https://github.com/nvim-lua/plenary.nvim",
+  })
+  local actions = require("telescope.actions")
+	local action_layout = require("telescope.actions.layout")
+
+  require('telescope').setup({
+    defaults = {
+      prompt_prefix = "   ",
+			selection_caret = "▎ ",
+			multi_icon = " │ ",
+			winblend = 0,
+			borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+			mappings = {
+					i = {
+						["<M-p>"] = action_layout.toggle_preview,
+						["<S-down>"] = actions.preview_scrolling_down,
+						["<S-up>"] = actions.preview_scrolling_up,
+					},
+					n = {
+						["q"] = require("telescope.actions").close,
+						["<M-p>"] = action_layout.toggle_preview,
+						["<S-down>"] = actions.preview_scrolling_down,
+						["<S-up>"] = actions.preview_scrolling_up,
+					},
+			},
+      -- preview = {
+			--     hide_on_startup = true,
+			-- },
+			file_ignore_patterns = {
+					"^libs/",
+					"^includes/",
+					"^build/",
+					"^Build/",
+					"%.lib",
+					"%.so",
+					"%.exe",
+					"%.pdb",
+					"%.rdi",
+					"%.obj",
+			},
+		},
+		pickers = {
+				buffers = {
+					previewer = false,
+					theme = "dropdown",
+					mappings = {
+						n = {
+							["<C-e>"] = "delete_buffer",
+							["l"] = "select_default",
+						},
+					},
+					initial_mode = "normal",
+				},
+				find_files = {
+					-- theme = 'ivy', -- 'ivy', 'dropdown', 'cursor'
+					-- layout_strategy = 'vertical',
+					-- layout_config = { height = 0.9 },
+					-- previewer = false,
+					path_display = { "smart" },
+					layout_config = {
+						prompt_position = "top",
+						preview_width = 0.5,
+						-- width = 0.7,
+					},
+					sorting_strategy = "ascending",
+				},
+				help_tags = {
+					theme = "ivy",
+				},
+				symbols = {
+					theme = "dropdown",
+				},
+				registers = {
+					theme = "ivy",
+				},
+				grep_string = {
+					initial_mode = "normal",
+					theme = "ivy",
+				},
+				live_grep = {
+					theme = "ivy",
+				},
+		},
+  })
+  local builtin = require('telescope.builtin')
+  vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
+  vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
+  vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
+  vim.keymap.set('n',"<leader>fc",
+			              ":lua require'telescope.builtin'.find_files({ cwd = vim.fn.stdpath('config')})<cr>",
+			              {})
+end)
+
+vim.pack.add({
+  "https://github.com/MeanderingProgrammer/render-markdown.nvim",
+  "https://github.com/iamcco/markdown-preview.nvim",
+})
+
+local renderOpts = {
+  heading = {
+    enabled = true,
+    render_modes = true,
+    sign = true,
+    icons = { "󰲡 ", "󰲣 ", "󰲥 ", "󰲧 ", "󰲩 ", "󰲫 " },
+    position = "overlay",
+    signs = { "󰫎 " },
+    width = "full",
+    left_margin = 0,
+    left_pad = 0,
+    right_pad = 0,
+    min_width = 0,
+    border = false,
+    backgrounds = {
+      "RenderMarkdownH1Bg", "RenderMarkdownH2Bg", "RenderMarkdownH3Bg",
+      "RenderMarkdownH4Bg", "RenderMarkdownH5Bg", "RenderMarkdownH6Bg",
+    },
+    foregrounds = {
+      "RenderMarkdownH1", "RenderMarkdownH2", "RenderMarkdownH3",
+      "RenderMarkdownH4", "RenderMarkdownH5", "RenderMarkdownH6",
+    },
+  },
+  code = {
+    enabled = true,
+    render_modes = true,
+    sign = true,
+    style = "full",
+    position = "left",
+    language_pad = 0,
+    language_name = true,
+    disable_background = { "diff" },
+    width = "full",
+    left_margin = 0,
+    left_pad = 0,
+    right_pad = 0,
+    min_width = 0,
+    border = "thin",
+    above = "▄",
+    below = "▀",
+    highlight = "RenderMarkdownCode",
+    highlight_inline = "RenderMarkdownCodeInline",
+  },
+  checkbox = {
+    enabled = true,
+    render_modes = true,
+    position = "inline",
+    unchecked = { icon = "󰄱 ", highlight = "RenderMarkdownUnchecked" },
+    checked = { icon = "󰱒 ", highlight = "RenderMarkdownChecked" },
+    custom = {
+      todo = { raw = "[-]", rendered = "󰗡 Todo", highlight = "RenderMarkdownTodo" },
+    },
+  },
+  pipe_table = {
+    enabled = true,
+    render_modes = true,
+    preset = "none",
+    style = "full",
+    cell = "padded",
+    padding = 1,
+    border = {
+      "┌", "┬", "┐", "├", "┼", "┤", "└", "┴", "┘", "│", "─",
+    },
+  },
+  callout = {
+    note = { raw = "[!NOTE]", rendered = "󰋽 Note", highlight = "RenderMarkdownInfo" },
+    tip = { raw = "[!TIP]", rendered = "󰌶 Tip", highlight = "RenderMarkdownSuccess" },
+    warning = { raw = "[!WARNING]", rendered = "󰀪 Warning", highlight = "RenderMarkdownWarn" },
+    caution = { raw = "[!CAUTION]", rendered = "󰳦 Caution", highlight = "RenderMarkdownError" },
+    -- Obsidian-style callouts
+    todo = { raw = "[!TODO]", rendered = "󰗡 Todo", highlight = "RenderMarkdownInfo" },
+  },
+}
+require("render-markdown").setup(renderOpts)
+
 local colours = require("utils.colors")
-colours.ColorMyPencils("jellybeans")
+colours.ColorMyPencils("naysayer")

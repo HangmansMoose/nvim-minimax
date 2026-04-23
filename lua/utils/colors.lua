@@ -53,6 +53,8 @@ function M.ColorMyPencils(color)
 		vim.cmd("hi MiniNotifyNormal guibg=#050505")
 		vim.cmd("hi MiniNotifyBorder guibg=#050505")
 		vim.cmd("hi MiniFilesNormal guibg=#050505")
+		vim.cmd("hi MiniStatuslineFilename guibg=#050505")
+		vim.cmd("hi MiniStatuslineDevinfo guibg=#050505")
 		--vim.cmd("hi LineNrAbove guifg=#666666")
 		--vim.cmd("hi LineNrBelow guifg=#666666")
 		--vim.cmd("hi MatchParen guibg=#777777")
@@ -64,34 +66,36 @@ function M.ColorMyPencils(color)
 		vim.cmd("hi NormalNC guibg=#151515")
 		vim.cmd("hi LineNr guibg=#151515")
 		vim.cmd("hi TelescopeNormal guibg=#151515")
-		vim.cmd("hi SnacksNormal guibg=#151515")
-		vim.cmd("hi SnacksPicker guibg=#151515")
-		vim.cmd("hi SnacksPickerBoxBorder guibg=#151515")
-		vim.cmd("hi SnacksNormalNC guibg=#151515")
 		vim.cmd("hi Comment guifg=#6f7b68")
 		vim.cmd("hi LineNrAbove guifg=#666666")
 		vim.cmd("hi LineNrBelow guifg=#666666")
 		vim.cmd("hi MatchParen guibg=#999999 guifg=#303030")
 		vim.cmd("hi Delimiter guifg=#666666")
-
-		--vim.cmd'hi String guifg=#2CA198'
-	end
-
-	if color == "naysayer" then
-		vim.cmd("hi Normal guibg=#151515")
-		vim.cmd("hi NormalNC guibg=#151515")
-		vim.cmd("hi LineNr guibg=#151515")
-		vim.cmd("hi TelescopeNormal guibg=#151515")
-		vim.cmd("hi SnacksNormal guibg=#151515")
-		vim.cmd("hi SnacksPicker guibg=#151515")
-		vim.cmd("hi SnacksPickerBoxBorder guibg=#151515")
-		vim.cmd("hi SnacksNormalNC guibg=#151515")
 		vim.cmd("hi MiniPickNormal guibg=#050505")
 		vim.cmd("hi MiniPickBorder guibg=#050505")
 		vim.cmd("hi MiniPickPrompt guibg=#050505")
 		vim.cmd("hi MiniNotifyNormal guibg=#050505")
 		vim.cmd("hi MiniNotifyBorder guibg=#050505")
 		vim.cmd("hi MiniFilesNormal guibg=#050505")
+		vim.cmd("hi MiniStatuslineFilename guibg=#050505")
+		vim.cmd("hi MiniStatuslineDevinfo guibg=#050505")
+
+		--vim.cmd'hi String guifg=#2CA198'
+	end
+
+	if color == "naysayer" then
+		vim.cmd("hi Normal guibg=#050505")
+		vim.cmd("hi NormalNC guibg=#050505")
+		vim.cmd("hi LineNr guibg=#050505")
+		vim.cmd("hi TelescopeNormal guibg=#050505")
+		vim.cmd("hi MiniPickNormal guibg=#050505")
+		vim.cmd("hi MiniPickBorder guibg=#050505")
+		vim.cmd("hi MiniPickPrompt guibg=#050505")
+		vim.cmd("hi MiniNotifyNormal guibg=#050505")
+		vim.cmd("hi MiniNotifyBorder guibg=#050505")
+		vim.cmd("hi MiniFilesNormal guibg=#050505")
+		vim.cmd("hi MiniStatuslineFilename guibg=#050505")
+		vim.cmd("hi MiniStatuslineDevinfo guibg=#050505")
 		--vim.cmd'hi String guifg=#2CA198'
 	end
 
