@@ -134,8 +134,7 @@ nmap_leader('f:', '<Cmd>Pick history scope=":"<CR>',            '":" history')
 nmap_leader('fa', '<Cmd>Pick git_hunks scope="staged"<CR>',     'Added hunks (all)')
 nmap_leader('fA', pick_added_hunks_buf,                         'Added hunks (buf)')
 nmap_leader('fb', '<Cmd>Pick buffers<CR>',                      'Buffers')
--- Had to normalize here as neovim does not like backslashes.
-nmap_leader('fc', '<Cmd>Pick files path="' .. vim.fs.normalize(vim.fn.stdpath("config")) .. '"<CR>', 'Config Files')
+nmap_leader('fc', [[<cmd>lua vim.cmd('Pick files scope="]] .. vim.fs.normalize(vim.fn.stdpath('config')) .. [["')<CR>]], 'Config Files')
 nmap_leader('fC', '<Cmd>Pick git_commits path="%"<CR>',         'Commits (buf)')
 nmap_leader('fd', '<Cmd>Pick diagnostic scope="all"<CR>',       'Diagnostic workspace')
 nmap_leader('fD', '<Cmd>Pick diagnostic scope="current"<CR>',   'Diagnostic buffer')
@@ -250,6 +249,7 @@ nmap_leader('vL', '<Cmd>lua MiniVisits.remove_label()<CR>',       'Remove label'
 -- Non MiniMax KeyBinds ============================================================
 -- automatically nohl
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
+
 
 nmap_leader('n', '<Cmd>NvimTreeToggle<CR>', 'NvimTreeToggle')
 -- Update plugins

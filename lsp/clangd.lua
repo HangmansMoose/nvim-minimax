@@ -10,7 +10,7 @@ return {
         "--header-insertion=never",
         "-j=4",
     },
-    filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
+    filetypes = { "c", "cpp", "h", "hpp", "inl", "objc", "objcpp", "cuda" },
     root_markers = {
         ".clangd",
         "compile_flags.txt",
@@ -30,10 +30,10 @@ return {
             client.offset_encoding = init_result.offsetEncoding
         end
     end,
-    on_attach = function(client, bufnr)
-        -- This should hopefully disable all clangd warnings/errors but keep syntax highlighting and completion
-        if client.name == "clangd" then
-            client.handlers["textDocument/publishDiagnostics"] = function() end
-        end
-    end,
+    --on_attach = function(client, bufnr)
+    --    -- This should hopefully disable all clangd warnings/errors but keep syntax highlighting and completion
+    --    if client.name == "clangd" then
+    --        client.handlers["textDocument/publishDiagnostics"] = function() end
+    --    end
+    --end,
 }

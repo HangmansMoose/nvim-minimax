@@ -271,4 +271,4 @@ local renderOpts = {
 require("render-markdown").setup(renderOpts)
 
 local colours = require("utils.colors")
-colours.ColorMyPencils("melange")
+colours.ColorMyPencils("naysayer")
