@@ -100,7 +100,7 @@ vim.g.neovide_cursor_animate_command_line = true
 vim.g.neovide_scroll_animation_length = 0.15
 vim.g.neovide_refresh_rate = 144
 vim.g.neovide_position_animation_length = 0
-vim.o.guifont = "CaskaydiaMono_NF:Medium:h14:#e-subpixelantialias"
+vim.o.guifont = "CaskaydiaMono_NF:Medium:h13:#e-subpixelantialias"
 vim.g.neovide_opacity = 1.00
 vim.g.neovide_normal_opacity = 1.00
 
