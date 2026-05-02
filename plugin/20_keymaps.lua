@@ -254,4 +254,8 @@ vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 nmap_leader('n', '<Cmd>NvimTreeToggle<CR>', 'NvimTreeToggle')
 -- Update plugins
 nmap_leader('pu', '<Cmd>lua vim.pack.update()<CR>', 'Update all plugins')
+
+-- Change colorscheme with ColorMyPencils function
+nmap_leader('cc', '<Cmd>lua require("utils.colors").ColorMyPencils')
+
 -- stylua: ignore end
