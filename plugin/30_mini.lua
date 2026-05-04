@@ -93,7 +93,14 @@ end)
 --
 -- See also:
 -- - `:h MiniNotify.config` for some of common configuration examples.
-now(function() require('mini.notify').setup() end)
+now(function() require('mini.notify').setup({
+  ERROR = { duration = 10000 },
+  lsp_progress = {
+    duration_last = 5000
+  }
+})
+
+ end)
 
 -- Session management. A thin wrapper around `:h mksession` that consistently
 -- manages session files. Example usage:

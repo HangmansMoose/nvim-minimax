@@ -250,12 +250,74 @@ nmap_leader('vL', '<Cmd>lua MiniVisits.remove_label()<CR>',       'Remove label'
 -- automatically nohl
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
-
-nmap_leader('n', '<Cmd>NvimTreeToggle<CR>', 'NvimTreeToggle')
 -- Update plugins
 nmap_leader('pu', '<Cmd>lua vim.pack.update()<CR>', 'Update all plugins')
 
 -- Change colorscheme with ColorMyPencils function
 nmap_leader('cc', '<Cmd>lua require("utils.colors").ColorMyPencils')
 
+-- MiniNofify History in floating window
+vim.keymap.set('n',  '<leader>n', function()
+  -- Ensure mini.notify is loaded
+  if not _G.MiniNotify then
+    vim.notify('mini.notify is not loaded', vim.log.levels.WARN)
+    return
+  end
+
+  local buffer = vim.api.nvim_create_buf(false, true)
+
+  local ok, miniNotifyHistory = pcall(MiniNotify.get_all)
+  if not ok then
+    vim.notify('Could not get mini.notify history: ' .. tostring(history), vim.log.levels.ERROR)
+    return 
+  end
+
+  local lines = {}
+  for _, notification in ipairs(miniNotifyHistory) do
+    local time = os.date('%H:%M:%S', math.floor(notification.ts_add))
+    local level = vim.log.levels[notification.level] or notification.level
+
+    local msg_lines = vim.split(notication.msg, '\n', { plain = true })
+    for i, line in ipairs(msg_lines) do
+      if i == 1 then
+        table.insert(lines, string.format('[%s] %s', time, line))
+      else
+        table.insert(lines, string.format('     %s', line))
+      end
+    end
+  end
+
+  if #lines == 0 then
+    lines = { '  (no notifications)' }
+  end
+
+  vim.api.nvim_buf_set_lines(buffer, 0, -1, false, lines)
+  vim.bo[buffer].modifiable = false
+  vim.bo[buffer].buftype = 'nofile'
+
+  local width = math.floor(vim.o.columns * 0.6)
+  local height = math.min(#lines + 2, math.floor(vim.o.lines * 0.7))
+  local row = math.floor((vim.o.lines - height) / 2)
+  local column = math.floor((vim.o.columns - width) / 2)
+
+  local win = vim.api.nvim_open_win(buffer, true, {
+    relative = 'editor',
+    width = width,
+    height = height,
+    row = row,
+    col = column,
+    style = 'minimal',
+    border = 'rounded',
+    title = 'MiniNotify History',
+    title_pos = 'center'
+  })
+
+  -- Close with q or <Esc>
+  for _, key in ipairs( {'q', '<Esc>' }) do
+    vim.keymap.set('n', key, function()
+      vim.api.nvim_win_close(win, true)
+    end, { buffer = buffer, nowait = true })
+  end
+ end, {desc='Show MiniNotify History'} 
+)
 -- stylua: ignore end
