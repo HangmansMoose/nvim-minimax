@@ -253,8 +253,10 @@ vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 -- Update plugins
 nmap_leader('pu', '<Cmd>lua vim.pack.update()<CR>', 'Update all plugins')
 
--- Change colorscheme with ColorMyPencils function
-nmap_leader('cc', '<Cmd>lua require("utils.colors").ColorMyPencils')
+-- Trouble
+nmap_leader('tt', '<Cmd>Trouble diagnostics toggle<CR>', 'Toggle Trouble')
+nmap_leader('tq', '<Cmd>Trouble qflist toggle<CR>', 'Toggle Trouble qflist')
+nmap_leader('tl', '<Cmd>Trouble lsp toggle focus=false win.position=below<CR>', 'Toggle Trouble LSP only')
 
 -- MiniNofify History in floating window
 vim.keymap.set('n',  '<leader>n', function()

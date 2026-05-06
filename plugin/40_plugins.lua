@@ -5,7 +5,11 @@
 -- This file contains installation and configuration of plugins outside of MINI.
 -- They significantly improve user experience in a way not yet possible with MINI.
 -- These are mostly plugins that provide programming language specific behavior.
---
+
+-- Ensure colour is loaded before any plugins so that it remains consistent through the load process
+-- even if something errors
+local colours = require("utils.colors")
+colours.ColorMyPencils("casey4coder")
 -- Use this file to install and configure other such plugins.
 -- UI2
 require('vim._core.ui2').enable({
@@ -303,16 +307,10 @@ now_if_args(function()
   require('mason').setup()
 end)
 
--- Snippets ===================================================================
-
--- Although 'mini.snippets' provides functionality to manage snippet files, it
--- deliberately doesn't come with those.
---
--- The 'rafamadriz/friendly-snippets' is currently the largest collection of
--- snippet files. They are organized in 'snippets/' directory (mostly) per language.
--- 'mini.snippets' is designed to work with it as seamlessly as possible.
--- See `:h MiniSnippets.gen_loader.from_lang()`.
-later(function() add({ 'https://github.com/rafamadriz/friendly-snippets' }) end)
+now_if_args(function() 
+  add({ 'https://github.com/folke/trouble.nvim' })
+  require('trouble').setup()
+end)
 
 -- Beautiful, usable, well maintained color schemes outside of 'mini.nvim' and
 -- have full support of its highlight groups. Use if you don't like 'miniwinter'
@@ -330,9 +328,6 @@ Config.now(function()
 --   -- Enable only one
 --   vim.cmd('colo gruvbuddy')
 end)
-
-local colours = require("utils.colors")
-colours.ColorMyPencils("casey4coder")
 
 -- TODO: This needs a better place to live. Makes the custom color function available as a command
 vim.api.nvim_create_user_command("Colour", function(args)
