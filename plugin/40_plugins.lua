@@ -132,7 +132,7 @@ end)
 -- LSPNESS =====================================================================================
 now_if_args(function()
   add({ 
-    'https://github.com/neovim/nvim-lspconfig', 
+    'https://github.com/neovim/nvim-lspconfig',
     'https://github.com/mason-org/mason.nvim',
     'https://github.com/mason-org/mason-lspconfig.nvim',
     'https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim'
@@ -307,9 +307,33 @@ now_if_args(function()
   require('mason').setup()
 end)
 
-now_if_args(function() 
-  add({ 'https://github.com/folke/trouble.nvim' })
+now_if_args(function()
+  add({ 
+    'https://github.com/folke/trouble.nvim',
+    'https://github.com/folke/todo-comments.nvim',
+    'https://github.com/nvim-lua/plenary.nvim'
+  })
   require('trouble').setup()
+  require("todo-comments").setup({
+				keywords = {
+					TODO = { color = "#ff0000" },
+					HACK = { color = "#ff6600" },
+					NOTE = { color = "#008000" },
+					FIXME = { color = "#f06292" },
+					LEFTOFF = { color = "#ffff99" },
+					nocheckin = { color = "#ff00ff" },
+				},
+				-- Pattern to hightlight the keywords
+				highlight = {
+					pattern = [[(KEYWORDS|keywords)\s*(\([^\)]*\))?:]],
+					keyword = "fg",
+					after = "",
+					before = "",
+				},
+				gui_style = {
+					fg = "BOLD",
+				},
+			})
 end)
 
 -- Beautiful, usable, well maintained color schemes outside of 'mini.nvim' and

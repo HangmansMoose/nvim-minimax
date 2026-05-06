@@ -125,3 +125,10 @@ Config.on_packchanged = function(plugin_name, kinds, callback, desc)
   Config.new_autocmd('PackChanged', '*', f, desc)
 end
 
+-- Stop ftplugin values from installed plugins overriding local configs
+vim.api.nvim_create_autocmd("BufEnter", {
+    callback = function()
+        vim.opt.formatoptions:remove({ "o", "r" })
+    end
+})
+
