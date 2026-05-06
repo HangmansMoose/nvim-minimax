@@ -277,7 +277,7 @@ vim.keymap.set('n',  '<leader>n', function()
     local time = os.date('%H:%M:%S', math.floor(notification.ts_add))
     local level = vim.log.levels[notification.level] or notification.level
 
-    local msg_lines = vim.split(notication.msg, '\n', { plain = true })
+    local msg_lines = vim.split(notification.msg, '\n', { plain = true })
     for i, line in ipairs(msg_lines) do
       if i == 1 then
         table.insert(lines, string.format('[%s] %s', time, line))

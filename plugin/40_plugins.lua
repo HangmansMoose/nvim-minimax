@@ -211,7 +211,7 @@ now_if_args(function()
             "clangd",
             "--background-index",
             "--header-insertion=never",
-            "-j=8",
+            "-j=4",
           },
         },
         gopls = {},
@@ -325,9 +325,10 @@ Config.now(function()
     'https://github.com/rebelot/kanagawa.nvim',
     'https://github.com/alljokecake/naysayer-theme.nvim',
     'https://github.com/savq/melange-nvim',
+    'https://github.com/tjdevries/colorbuddy.nvim',
   })
 --   -- Enable only one
---   vim.cmd('color everforest')
+--   vim.cmd('colo gruvbuddy')
 end)
 
 local colours = require("utils.colors")
@@ -336,7 +337,7 @@ colours.ColorMyPencils("casey4coder")
 -- TODO: This needs a better place to live. Makes the custom color function available as a command
 vim.api.nvim_create_user_command("Colour", function(args)
       local scheme = args.fargs[1]
-      require("utils.colors").ColorMyPencils(scheme)
+      colours.ColorMyPencils(scheme)
     end,
     {
       nargs = "?",
