@@ -21,21 +21,21 @@ local c = {
   bg_popup    = "#141414",
   bg_float    = "#141414",
 
-  fg          = "#a08563",   -- default text (warm tan)
-  fg_muted    = "#686868",   -- comments / muted
-  fg_dim      = "#5b4d3c",   -- disabled / placeholder
+  fg          = "#a08563",   
+  fg_muted    = "#686868",   
+  fg_dim      = "#5b4d3c",   
 
-  keyword     = "#ac7b0b",   -- amber  – keywords, storage
-  func        = "#cc5735",   -- burnt orange – functions
-  type        = "#d8a51d",   -- gold – types, properties
-  macro       = "#478980",   -- teal – preprocessor / macros
-  string      = "#6b8e23",   -- olive green – strings, numbers, constants
-  operator    = "#907553",   -- warm brown – operators, punctuation
-  attr        = "#b09573",   -- light tan – attributes, active guides
-  comment     = "#686868",   -- gray
+  keyword     = "#ac7b0b",   
+  func        = "#cc5735",   
+  type        = "#d8a51d",   
+  macro       = "#478980",   
+  string      = "#6b8e23",   
+  operator    = "#907553",   
+  attr        = "#b09573",   
+  comment     = "#6F7B68",   
 
-  cursor_p    = "#00ee00",   -- primary cursor (green)
-  cursor_s    = "#ee7700",   -- secondary cursor (orange)
+  cursor_p    = "#00ee00",   
+  cursor_s    = "#ee7700",   
 
   error       = "#ff0000",
   warn        = "#e3811c",
