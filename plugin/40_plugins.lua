@@ -8,8 +8,6 @@
 
 -- Ensure colour is loaded before any plugins so that it remains consistent through the load process
 -- even if something errors
-local colours = require("utils.colors")
-colours.ColorMyPencils("casey4coder")
 -- Use this file to install and configure other such plugins.
 -- UI2
 require('vim._core.ui2').enable({
@@ -336,6 +334,11 @@ now_if_args(function()
 			})
 end)
 
+--now_if_args(function()
+--  add({ 'https://github.com/dmtrKovalenko/fff' })
+--  require('fff').setup()
+--end)
+
 -- Beautiful, usable, well maintained color schemes outside of 'mini.nvim' and
 -- have full support of its highlight groups. Use if you don't like 'miniwinter'
 -- enabled in 'plugin/30_mini.lua' or other suggested 'mini.hues' based ones.
@@ -348,11 +351,14 @@ Config.now(function()
     'https://github.com/alljokecake/naysayer-theme.nvim',
     'https://github.com/savq/melange-nvim',
     'https://github.com/tjdevries/colorbuddy.nvim',
+    'https://github.com/54L1M/Oshen.nvim',
   })
 --   -- Enable only one
 --   vim.cmd('colo gruvbuddy')
 end)
 
+local colours = require("utils.colors")
+colours.ColorMyPencils("Oshen")
 -- TODO: This needs a better place to live. Makes the custom color function available as a command
 vim.api.nvim_create_user_command("Colour", function(args)
       local scheme = args.fargs[1]
