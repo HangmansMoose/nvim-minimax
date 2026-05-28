@@ -1,8 +1,9 @@
 local M = {}
 
 -- Define the custom function
-function M.ColorMyPencils(color)
+function M.CustomColourscheme(color)
 	-- Clear existing highlights
+	vim.cmd("hi clear")
 	vim.cmd.colorscheme(color)
 
 	vim.cmd("hi cTodo guibg=NONE")
@@ -138,6 +139,12 @@ function M.ColorMyPencils(color)
 		end
 	end
 
+	if vim.g.neovide then
+	    vim.g.neovide_title_background_color = string.format(
+    		"%x",
+    		vim.api.nvim_get_hl(0, {id=vim.api.nvim_get_hl_id_by_name("Normal")}).bg
+	    )
+	end
 	-- Transparency regardless of colorscheme
 	-- In lua ~= is not equal to
 	--if vim.loop.os_uname().sysname ~= "Windows_NT" then

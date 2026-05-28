@@ -6,6 +6,47 @@
 -- They significantly improve user experience in a way not yet possible with MINI.
 -- These are mostly plugins that provide programming language specific behavior.
 
+-- Stole this from kickstart while I better understand mini 
+local function run_build(name, cmd, cwd)
+    local result = vim.system(cmd, { cwd = cwd }):wait()
+    if result.code ~= 0 then
+      local stderr = result.stderr or ''
+      local stdout = result.stdout or ''
+      local output = stderr ~= '' and stderr or stdout
+      if output == '' then output = 'No output from build command.' end
+      vim.notify(('Build failed for %s:\n%s'):format(name, output), vim.log.levels.ERROR)
+    end
+  end
+
+  -- This autocommand runs after a plugin is installed or updated and
+  --  runs the appropriate build command for that plugin if necessary.
+  --
+  -- See `:help vim.pack-events`
+  vim.api.nvim_create_autocmd('PackChanged', {
+    callback = function(ev)
+      local name = ev.data.spec.name
+      local kind = ev.data.kind
+      if kind ~= 'install' and kind ~= 'update' then return end
+
+      if name == 'telescope-fzf-native.nvim' and vim.fn.executable 'make' == 1 then
+        --run_build(name,{'cmake', '-S.', '-Bbuild', '-DCMAKE_BUILD_TYPE=Release', '&&', 'cmake', '--build', 'build', '--config', 'Release', '--target', 'install'}, ev.data.path)
+        run_build(name,{'make'}, ev.data.path)
+        return
+      end
+
+      if name == 'LuaSnip' then
+        if vim.fn.has 'win32' ~= 1 and vim.fn.executable 'make' == 1 then run_build(name, { 'make', 'install_jsregexp' }, ev.data.path) end
+        return
+      end
+
+      if name == 'nvim-treesitter' then
+        if not ev.data.active then vim.cmd.packadd 'nvim-treesitter' end
+        vim.cmd 'TSUpdate'
+        return
+      end
+    end,
+  })
+
 -- Ensure colour is loaded before any plugins so that it remains consistent through the load process
 -- even if something errors
 -- Use this file to install and configure other such plugins.
@@ -88,7 +129,8 @@ now_if_args(function()
     'zig',
     'rust',
     'go',
-    'json'
+    'json',
+    'odin',
     -- To see available languages:
     -- - Execute `:=require('nvim-treesitter').get_available()`
     -- - Visit 'SUPPORTED_LANGUAGES.md' file at
@@ -164,35 +206,6 @@ now_if_args(function()
           --  For example, in C this would take you to the header.
           map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
-          -- The following two autocommands are used to highlight references of the
-          -- word under your cursor when your cursor rests there for a little while.
-          --    See `:help CursorHold` for information about when this is executed
-          --
-          -- When you move your cursor, the highlights will be cleared (the second autocommand).
-          local client = vim.lsp.get_client_by_id(event.data.client_id)
-          if client and client:supports_method('textDocument/documentHighlight', event.buf) then
-            local highlight_augroup = vim.api.nvim_create_augroup('hangmansmoose-lsp-highlight', { clear = false })
-            vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-              buffer = event.buf,
-              group = highlight_augroup,
-              callback = vim.lsp.buf.document_highlight,
-            })
-
-            vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-              buffer = event.buf,
-              group = highlight_augroup,
-              callback = vim.lsp.buf.clear_references,
-            })
-
-            vim.api.nvim_create_autocmd('LspDetach', {
-              group = vim.api.nvim_create_augroup('hangmansmoose-lsp-detach', { clear = true }),
-              callback = function(event2)
-                vim.lsp.buf.clear_references()
-                vim.api.nvim_clear_autocmds { group = 'hangmansmoose-lsp-highlight', buffer = event2.buf }
-              end,
-            })
-          end
-
           -- The following code creates a keymap to toggle inlay hints in your
           -- code, if the language server you are using supports them
           --
@@ -217,6 +230,7 @@ now_if_args(function()
           },
         },
         gopls = {},
+        ols = {}, -- odin language server
         pyright = {},
         rust_analyzer = {},
         zls = {}, 
@@ -225,42 +239,6 @@ now_if_args(function()
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         -- ts_ls = {},
-
-        stylua = {}, -- Used to format Lua code
-
-        -- Special Lua Config, as recommended by neovim help docs
-        lua_ls = {
-          on_init = function(client)
-            client.server_capabilities.documentFormattingProvider = false -- Disable formatting (formatting is done by stylua)
-
-            if client.workspace_folders then
-              local path = client.workspace_folders[1].name
-              if path ~= vim.fn.stdpath 'config' and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc')) then return end
-            end
-
-            client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
-              runtime = {
-                version = 'LuaJIT',
-                path = { 'lua/?.lua', 'lua/?/init.lua' },
-              },
-              workspace = {
-                checkThirdParty = false,
-                -- NOTE: this is a lot slower and will cause issues when working on your own configuration.
-                --  See https://github.com/neovim/nvim-lspconfig/issues/3189
-                library = vim.tbl_extend('force', vim.api.nvim_get_runtime_file('', true), {
-                  '${3rd}/luv/library',
-                  '${3rd}/busted/library',
-                }),
-              },
-            })
-          end,
-          ---@type lspconfig.settings.lua_ls
-          settings = {
-            Lua = {
-              format = { enable = false }, -- Disable formatting (formatting is done by stylua)
-            },
-          },
-        },
       }
 
       -- Ensure the servers and tools above are installed
@@ -270,6 +248,7 @@ now_if_args(function()
       --    :Mason
       --
       -- You can press `g?` for help in this menu.
+      require('mason').setup()
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         -- You can add other tools here that you want Mason to install
@@ -283,28 +262,28 @@ now_if_args(function()
       end
 end)
 
--- Formatting =================================================================
-
--- Programs dedicated to text formatting (a.k.a. formatters) are very useful.
--- Neovim has built-in tools for text formatting (see `:h gq` and `:h 'formatprg'`).
--- They can be used to configure external programs, but it might become tedious.
---
-
--- Honorable mentions =========================================================
-
--- 'mason-org/mason.nvim' (a.k.a. "Mason") is a great tool (package manager) for
--- installing external language servers, formatters, and linters. It provides
--- a unified interface for installing, updating, and deleting such programs.
---
--- The caveat is that these programs will be set up to be mostly used inside Neovim.
--- If you need them to work elsewhere, consider using other package managers.
---
--- You can use it like so:
+-- LUALINE =======================================================
 now_if_args(function()
-  add({ 'https://github.com/mason-org/mason.nvim' })
-  require('mason').setup()
+  add({ 'https://github.com/nvim-lualine/lualine.nvim' })
+    require("lualine").setup({
+       options = {
+            icons_enabled = true,
+            theme = "auto",
+            globalstatus = true,
+        },
+      sections = {
+        lualine_c = {
+              {
+            	  "filename",
+            	  path = 3,
+                }
+        },
+      },
+  })
 end)
 
+
+-- FOLKE ===========================================
 now_if_args(function()
   add({ 
     'https://github.com/folke/trouble.nvim',
@@ -334,14 +313,7 @@ now_if_args(function()
 			})
 end)
 
---now_if_args(function()
---  add({ 'https://github.com/dmtrKovalenko/fff' })
---  require('fff').setup()
---end)
-
--- Beautiful, usable, well maintained color schemes outside of 'mini.nvim' and
--- have full support of its highlight groups. Use if you don't like 'miniwinter'
--- enabled in 'plugin/30_mini.lua' or other suggested 'mini.hues' based ones.
+-- COLOURS ====================================================================
 Config.now(function()
 --  -- Install only those that you need
   add({
@@ -352,20 +324,215 @@ Config.now(function()
     'https://github.com/savq/melange-nvim',
     'https://github.com/tjdevries/colorbuddy.nvim',
     'https://github.com/54L1M/Oshen.nvim',
+    'https://github.com/szymonwilczek/arete.nvim'
   })
 --   -- Enable only one
 --   vim.cmd('colo gruvbuddy')
 end)
 
 local colours = require("utils.colors")
-colours.ColorMyPencils("Oshen")
+colours.CustomColourscheme("Oshen")
 -- TODO: This needs a better place to live. Makes the custom color function available as a command
 vim.api.nvim_create_user_command("Colour", function(args)
       local scheme = args.fargs[1]
-      colours.ColorMyPencils(scheme)
+      colours.CustomColourscheme(scheme)
     end,
     {
       nargs = "?",
       complete = "color"
     }
 )
+
+-- TELESCOPE (MOVE THIS TO ITS OWN FILE)
+local telescope_plugins = {
+    'https://github.com/nvim-lua/plenary.nvim',
+    'https://github.com/nvim-telescope/telescope.nvim',
+    'https://github.com/nvim-telescope/telescope-ui-select.nvim',
+    'https://github.com/nvim-telescope/telescope-file-browser.nvim',
+		'https://github.com/nvim-telescope/telescope-symbols.nvim',
+    'https://github.com/nvim-telescope/telescope-fzf-native.nvim',
+}
+
+  
+  -- NOTE: You can install multiple plugins at once
+vim.pack.add(telescope_plugins)
+
+local actions = require("telescope.actions")
+local action_layout = require("telescope.actions.layout")
+local fb_actions = require("telescope").extensions.file_browser.actions
+ -- See `:help telescope` and `:help telescope.setup()`
+ require('telescope').setup {
+   -- You can put your default mappings / updates / etc. in here
+   --  All the info you're looking for is in `:help telescope.setup()`
+   --
+   defaults = {
+     file_ignore_patterns = {
+       "^libs/",
+ 			"^includes/",
+ 			"^build/",
+ 			"^Build/",
+       "^bin/",
+       "^Bin/",
+       "^thirdparty/",
+       "^dependencies/",
+       "^Thirdparty/",
+       "^Dependencies/",
+       "%.lib",
+ 			"%.so",
+ 			"%.exe",
+ 			"%.pdb",
+ 			"%.rdi",
+ 			"%.obj"
+
+     }
+   --   mappings = {
+   --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+   --   },
+   },
+   pickers = {
+     buffers = {
+       previewer = false,
+       theme = "dropdown",
+       intitial_mode = "insert"
+     },
+     find_files = {
+ 				-- theme = 'ivy', -- 'ivy', 'dropdown', 'cursor'
+ 				-- layout_strategy = 'vertical',
+ 				-- layout_config = { height = 0.9 },
+ 				-- previewer = false,
+ 				path_display = { "smart" },
+ 				layout_config = {
+ 					prompt_position = "top",
+ 					preview_width = 0.5,
+ 					-- width = 0.7,
+ 				},
+ 				sorting_strategy = "ascending",
+ 			},
+ 			help_tags = {
+ 				theme = "ivy",
+ 			},
+ 			symbols = {
+ 				theme = "dropdown",
+ 			},
+ 			registers = {
+ 				theme = "ivy",
+ 			},
+ 			grep_string = {
+ 				initial_mode = "normal",
+ 				theme = "ivy",
+ 			},
+ 			live_grep = {
+ 				theme = "ivy",
+ 			},
+ 		},
+   extensions = {
+     ['ui-select'] = { require('telescope.themes').get_dropdown() },
+     file_browser = {
+ 				dir_icon = "",
+ 				prompt_path = true,
+ 				grouped = true,
+ 				theme = "dropdown",
+ 				initial_mode = "normal",
+ 				previewer = false,
+ 				mappings = {
+ 					n = {
+ 						["o"] = "select_default",
+ 						["H"] = fb_actions.toggle_hidden,
+ 						["h"] = fb_actions.goto_parent_dir,
+ 						["l"] = "select_default",
+ 					},
+ 				},
+ 			},
+ 			undo = {
+ 				initial_mode = "normal",
+ 				side_by_side = true,
+ 				theme = "ivy",
+ 				layout_config = {
+ 					preview_width = 0.7,
+ 				},
+ 			},
+ 			heading = {
+ 				treesitter = true,
+ 			},
+   },
+ }
+
+ -- Enable Telescope extensions if they are installed
+ pcall(require('telescope').load_extension, 'fzf')
+ pcall(require('telescope').load_extension, 'ui-select')
+
+ -- See `:help telescope.builtin`
+ local builtin = require 'telescope.builtin'
+ vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = '[F]ind [H]elp' })
+ vim.keymap.set('n', '<leader>fk', builtin.keymaps, { desc = '[F]ind [K]eymaps' })
+ vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = '[F]ind [F]iles' })
+ vim.keymap.set({ 'n', 'v' }, '<leader>fw', builtin.grep_string, { desc = '[F]ind current [W]ord' })
+ vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = '[F]ind by [G]rep' })
+ vim.keymap.set('n', '<leader>fd', builtin.diagnostics, { desc = '[F]ind [D]iagnostics' })
+ vim.keymap.set('n', '<leader>fr', builtin.resume, { desc = '[F]ind [R]esume' })
+ vim.keymap.set('n', '<leader>fo', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
+ vim.keymap.set('n', '<leader>fc', builtin.commands, { desc = '[F]ind [C]ommands' })
+ vim.keymap.set('n', "<leader>fs", builtin.symbols, {desc = "[F]ind [S]ymbols" })
+ vim.keymap.set('n', "<leader>fq", builtin.quickfix, {desc = "Find Quickix" })
+ vim.keymap.set('n', "<leader>fi", "<cmd>Telscope import<cr>", {desc = "Find Imports" })
+ vim.keymap.set('n', "<leader>fz", "<cmd>Telescope zoxide list<cr>", {desc = "Find Directory" })
+
+ -- Add Telescope-based LSP pickers when an LSP attaches to a buffer.
+ -- If you later switch picker plugins, this is where to update these mappings.
+ vim.api.nvim_create_autocmd('LspAttach', {
+   group = vim.api.nvim_create_augroup('telescope-lsp-attach', { clear = true }),
+   callback = function(event)
+     local buf = event.buf
+
+     -- Find references for the word under your cursor.
+     vim.keymap.set('n', 'grr', builtin.lsp_references, { buffer = buf, desc = '[G]oto [R]eferences' })
+
+     -- Jump to the implementation of the word under your cursor.
+     -- Useful when your language has ways of declaring types without an actual implementation.
+     vim.keymap.set('n', 'gri', builtin.lsp_implementations, { buffer = buf, desc = '[G]oto [I]mplementation' })
+
+     -- Jump to the definition of the word under your cursor.
+     -- This is where a variable was first declared, or where a function is defined, etc.
+     -- To jump back, press <C-t>.
+     vim.keymap.set('n', 'grd', builtin.lsp_definitions, { buffer = buf, desc = '[G]oto [D]efinition' })
+
+     -- Fuzzy find all the symbols in your current document.
+     -- Symbols are things like variables, functions, types, etc.
+     vim.keymap.set('n', 'gO', builtin.lsp_document_symbols, { buffer = buf, desc = 'Open Document Symbols' })
+
+     -- Fuzzy find all the symbols in your current workspace.
+     -- Similar to document symbols, except searches over your entire project.
+     vim.keymap.set('n', 'gW', builtin.lsp_dynamic_workspace_symbols, { buffer = buf, desc = 'Open Workspace Symbols' })
+
+     -- Jump to the type of the word under your cursor.
+     -- Useful when you're not sure what type a variable is and you want to see
+     -- the definition of its *type*, not where it was *defined*.
+     vim.keymap.set('n', 'grt', builtin.lsp_type_definitions, { buffer = buf, desc = '[G]oto [T]ype Definition' })
+   end,
+ })
+
+ -- Override default behavior and theme when searching
+ vim.keymap.set('n', '<leader>/', function()
+   -- You can pass additional configuration to Telescope to change the theme, layout, etc.
+   builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+     winblend = 10,
+     previewer = false,
+   })
+ end, { desc = '[/] Fuzzily search in current buffer' })
+
+ -- It's also possible to pass additional configuration options.
+ --  See `:help telescope.builtin.live_grep()` for information about particular keys
+ vim.keymap.set(
+   'n',
+   '<leader>s/',
+   function()
+     builtin.live_grep {
+       grep_open_files = true,
+       prompt_title = 'Live Grep in Open Files',
+     }
+   end,
+   { desc = '[S]earch [/] in Open Files' }
+ )
+
+ -- Shortcut for searching your Neovim configuration files
+ vim.keymap.set('n', '<leader>fn', function() builtin.find_files { cwd = vim.fn.stdpath 'config' } end, { desc = '[F]ind [N]eovim files' })
