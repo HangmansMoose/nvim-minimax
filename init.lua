@@ -1,9 +1,3 @@
--- WARNING: NEOVIM 0.12 IS STILL UNDER DEVELOPMENT AND NOT YET STABLE.
--- BE SURE YOU ARE COMFORTABLE WITH KEEPING UP TO DATE DEVELOPMENT VERSION.
--- THIS CONFIG IS VERIFIED FOR AT LEAST VERSION `v0.12.0-dev-2260+g6b4ec2264e`.
--- WHEN IN DOUBT - UPDATE TO THE LATEST DEVELOPMENT VERSION.
-
--- ┌────────────────────┐
 -- │ Welcome to MiniMax │
 -- └────────────────────┘
 --
@@ -66,6 +60,8 @@
 -- - `:h vim.pack-events` - available events and plugin hooks examples
 -- - `:h vim.pack.update()` - more details about confirmation step
 
+-- Enable faster startup by caching compiled Lua modules
+vim.loader.enable()
 -- Define config table to be able to pass data between scripts
 -- It is a global variable which can be use both as `_G.Config` and `Config`
 _G.Config = {}
