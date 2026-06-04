@@ -315,14 +315,16 @@ Config.now(function()
     'https://github.com/savq/melange-nvim',
     'https://github.com/tjdevries/colorbuddy.nvim',
     'https://github.com/54L1M/Oshen.nvim',
-    'https://github.com/szymonwilczek/arete.nvim'
+    --'https://github.com/szymonwilczek/arete.nvim'
+	'https://github.com/oskarnurm/koda.nvim',
+	'https://github.com/metalelf0/kintsugi-nvim'
   })
 --   -- Enable only one
 --   vim.cmd('colo gruvbuddy')
 end)
 
 local colours = require("utils.colors")
-colours.CustomColourscheme("gruber-darker")
+colours.CustomColourscheme("koda-moss")
 -- TODO: This needs a better place to live. Makes the custom color function available as a command
 vim.api.nvim_create_user_command("Colour", function(args)
       local scheme = args.fargs[1]
