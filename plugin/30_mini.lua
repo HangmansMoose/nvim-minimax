@@ -131,34 +131,34 @@ now(function() require('mini.sessions').setup() end)
 -- See also:
 -- - `:h MiniStatusline-example-content` - example of default content. Use it to
 --   configure a custom statusline by setting `config.content.active` function.
---now(function() require('mini.statusline').setup({
---  use_icons = true,
---  section_location = function() return '%2l:%-2v' end,
---  --sections = {
---  --  active = {
---  --     
---  --  }
---  --}
---  combine_groups = function()
---    local mode, mode_hl = MiniStatusline.section_mode({ trunc_width = 120 })
---    local diagnostics   = MiniStatusline.section_diagnostics({ trunc_width = 75 })
---    local lsp           = MiniStatusline.section_lsp({ trunc_width = 75 })
---    local filename      = MiniStatusline.section_filename({ trunc_width = 140 })
---    local fileinfo      = MiniStatusline.section_fileinfo({ trunc_width = 120 })
---    local location      = MiniStatusline.section_location({ trunc_width = 75 })
---    local search        = MiniStatusline.section_searchcount({ trunc_width = 75 })
---
---    return {
---      { hl = mode_hl,                  strings = { mode } },
---      { hl = 'MiniStatuslineDevinfo',  strings = { diagnostics, lsp } },
---      '%<', -- Mark general truncate point
---      { hl = 'MiniStatuslineFilename', strings = { filename } },
---      '%=', -- End left alignment
---      { hl = 'MiniStatuslineFileinfo', strings = { fileinfo } },
---      { hl = mode_hl,                  strings = { search, location } },
---    }
---  end})
---end)
+now(function() require('mini.statusline').setup({
+  use_icons = true,
+  section_location = function() return '%2l:%-2v' end,
+  --sections = {
+  --  active = {
+  --     
+  --  }
+  --}
+  combine_groups = function()
+    local mode, mode_hl = MiniStatusline.section_mode({ trunc_width = 120 })
+    local diagnostics   = MiniStatusline.section_diagnostics({ trunc_width = 75 })
+    local lsp           = MiniStatusline.section_lsp({ trunc_width = 75 })
+    local filename      = MiniStatusline.section_filename({ trunc_width = 140 })
+    local fileinfo      = MiniStatusline.section_fileinfo({ trunc_width = 120 })
+    local location      = MiniStatusline.section_location({ trunc_width = 75 })
+    local search        = MiniStatusline.section_searchcount({ trunc_width = 75 })
+
+    return {
+      { hl = mode_hl,                  strings = { mode } },
+      { hl = 'MiniStatuslineDevinfo',  strings = { diagnostics, lsp } },
+      '%<', -- Mark general truncate point
+      { hl = 'MiniStatuslineFilename', strings = { filename } },
+      '%=', -- End left alignment
+      { hl = 'MiniStatuslineFileinfo', strings = { fileinfo } },
+      { hl = mode_hl,                  strings = { search, location } },
+    }
+  end})
+end)
 
 -- Tabline. Sets `:h 'tabline'` to show all listed buffers in a line at the top.
 -- Buffers are ordered as they were created. Navigate with `[b` and `]b`.

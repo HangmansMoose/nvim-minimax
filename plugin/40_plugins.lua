@@ -231,6 +231,7 @@ now_if_args(function()
             "clangd",
             "--background-index",
             "--header-insertion=never",
+			"--query-driver=G:/dev_tools/LLVM/bin/clang++.exe",
             "-j=4",
           },
         },
@@ -267,26 +268,6 @@ now_if_args(function()
       end
 end)
 
--- LUALINE =======================================================
-now_if_args(function()
-  add({ 'https://github.com/nvim-lualine/lualine.nvim' })
-    require("lualine").setup({
-       options = {
-            icons_enabled = true,
-            theme = "auto",
-            globalstatus = true,
-        },
-      sections = {
-        lualine_c = {
-              {
-            	  "filename",
-            	  path = 3,
-                }
-        },
-      },
-  })
-end)
-
 
 -- FOLKE ===========================================
 now_if_args(function()
@@ -318,6 +299,11 @@ now_if_args(function()
 			})
 end)
 
+-- Jusfile syntax highlighting
+now_if_args(function() 
+	add({"https://github.com/NoahTheDuke/vim-just"})
+end)
+
 -- COLOURS ====================================================================
 Config.now(function()
 --  -- Install only those that you need
@@ -336,7 +322,7 @@ Config.now(function()
 end)
 
 local colours = require("utils.colors")
-colours.CustomColourscheme("")
+colours.CustomColourscheme("gruber-darker")
 -- TODO: This needs a better place to live. Makes the custom color function available as a command
 vim.api.nvim_create_user_command("Colour", function(args)
       local scheme = args.fargs[1]
@@ -350,6 +336,5 @@ vim.api.nvim_create_user_command("Colour", function(args)
 
 Config.now(function()
 	require('plugins.telescope')
-	require('plugins.overseer')
 	require('plugins.debug')
 end)

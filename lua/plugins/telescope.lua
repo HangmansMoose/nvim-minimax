@@ -22,22 +22,24 @@ local fb_actions = require("telescope").extensions.file_browser.actions
    --
    defaults = {
      file_ignore_patterns = {
-       "^libs/",
- 			"^includes/",
- 			"^build/",
- 			"^Build/",
-       "^bin/",
-       "^Bin/",
-       "^thirdparty/",
-       "^dependencies/",
-       "^Thirdparty/",
-       "^Dependencies/",
-       "%.lib",
- 			"%.so",
- 			"%.exe",
- 			"%.pdb",
- 			"%.rdi",
- 			"%.obj"
+    	"libs/",
+    	"Libs/",
+ 		"includes/",
+ 		"Includes/",
+ 		"build/",
+ 		"Build/",
+       	"bin/",
+       	"Bin/",
+       	"thirdparty/",
+       	"Thirdparty/",
+       	"dependencies/",
+       	"Dependencies/",
+       	"%.lib",
+ 		"%.so",
+ 		"%.exe",
+ 		"%.pdb",
+ 		"%.rdi",
+ 		"%.obj"
 
      }
    --   mappings = {
