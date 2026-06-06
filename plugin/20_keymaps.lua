@@ -258,6 +258,8 @@ nmap_leader('tt', '<Cmd>Trouble diagnostics toggle<CR>', 'Toggle Trouble')
 nmap_leader('tq', '<Cmd>Trouble qflist toggle<CR>', 'Toggle Trouble qflist')
 nmap_leader('tl', '<Cmd>Trouble lsp toggle focus=false win.position=below<CR>', 'Toggle Trouble LSP only')
 
+
+nmap_leader('ee', '<Cmd>NvimTreeToggle<CR>', 'NvimTree')
 -- MiniNofify History in floating window
 vim.keymap.set('n',  '<leader>n', function()
   -- Ensure mini.notify is loaded

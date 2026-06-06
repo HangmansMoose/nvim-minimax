@@ -180,7 +180,10 @@ now_if_args(function()
     'https://github.com/neovim/nvim-lspconfig',
     'https://github.com/mason-org/mason.nvim',
     'https://github.com/mason-org/mason-lspconfig.nvim',
-    'https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim'
+    'https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim',
+
+	-- Zig 
+	'https://github.com/ziglang/zig.vim'
   })
  --  This function gets run when an LSP attaches to a particular buffer.
       --    That is to say, every time a new file is opened that is associated with
@@ -339,4 +342,5 @@ vim.api.nvim_create_user_command("Colour", function(args)
 Config.now(function()
 	require('plugins.telescope')
 	require('plugins.debug')
+	require('plugins.nvim-tree')
 end)
