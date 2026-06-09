@@ -314,20 +314,28 @@ Config.now(function()
     'https://github.com/WTFox/jellybeans.nvim',
     'https://github.com/blazkowolf/gruber-darker.nvim',
     'https://github.com/rebelot/kanagawa.nvim',
-    'https://github.com/alljokecake/naysayer-theme.nvim',
+    --'https://github.com/alljokecake/naysayer-theme.nvim',
     'https://github.com/savq/melange-nvim',
-    'https://github.com/tjdevries/colorbuddy.nvim',
     'https://github.com/54L1M/Oshen.nvim',
     --'https://github.com/szymonwilczek/arete.nvim'
 	'https://github.com/oskarnurm/koda.nvim',
-	'https://github.com/metalelf0/kintsugi-nvim'
+	'https://github.com/metalelf0/kintsugi-nvim',
+	'https://github.com/rose-pine/neovim',
+	'https://github.com/armannikoyan/rusty',
+	'https://github.com/aliqyan-21/darkvoid.nvim',
+	'https://github.com/kuri-sun/yoda.nvim',
+	'https://github.com/NLKNguyen/papercolor-theme',
+	'https://github.com/RostislavArts/naysayer.nvim',
+	'https://github.com/dchinmay2/alabaster.nvim',
+	'https://github.com/lodestone/lodestone.vim',
   })
 --   -- Enable only one
 --   vim.cmd('colo gruvbuddy')
 end)
 
 local colours = require("utils.colors")
-colours.CustomColourscheme("koda-moss")
+colours.CustomColourscheme("yoda")
+
 -- TODO: This needs a better place to live. Makes the custom color function available as a command
 vim.api.nvim_create_user_command("Colour", function(args)
       local scheme = args.fargs[1]
