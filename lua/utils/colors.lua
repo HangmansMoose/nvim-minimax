@@ -178,7 +178,7 @@ function M.CustomColourscheme(color)
 
 	for key, hl_group in pairs(hl_groups) do
 		if hl_group.italic then
-			vim.api.nvim_set_hl(0, key, vim.tbl_extend("force", hl_group, { italic = false }))
+			vim.api.nvim_set_hl(0, key, vim.tbl_extend("force", hl_group, { italic = false, bold = false }))
 		end
 	end
 
