@@ -10,9 +10,12 @@ vim.g.colors_name = "kujukuju"
 local hl = function(group, opts) vim.api.nvim_set_hl(0, group, opts) end
 
 local c = {
-  bg         = "#141824",
-  bg_panel   = "#080B14",
-  bg_popup   = "#080B14",
+  --bg         = "#141824",
+  --bg_panel   = "#080B14",
+  --bg_popup   = "#080B14",
+  bg         = "#121212",
+  bg_panel   = "#121212",
+  bg_popup   = "#121212",
   fg         = "#CBCEBC",
   fg_dim     = "#CBCEBC",
   fg_dim2    = "#87919D",
