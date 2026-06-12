@@ -334,7 +334,7 @@ Config.now(function()
 end)
 
 local colours = require("utils.colors")
-colours.CustomColourscheme("koda-moss")
+colours.CustomColourscheme("kujukuju")
 
 -- TODO: This needs a better place to live. Makes the custom color function available as a command
 vim.api.nvim_create_user_command("Colour", function(args)

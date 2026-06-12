@@ -22,10 +22,10 @@ nvimtree.setup({
 	renderer = {
 		icons = {
 			glyphs = {
-				folder = {
-					arrow_closed = "", -- closed folder icon
-					arrow_open = "", -- open folder icon
-				},
+				--folder = {
+				--	arrow_closed = "", -- closed folder icon
+				--	arrow_open = "", -- open folder icon
+				--},
 			},
 		},
 	},

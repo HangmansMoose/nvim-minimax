@@ -9,6 +9,25 @@ function M.CustomColourscheme(color)
 	vim.cmd("hi cTodo guibg=NONE")
 	vim.cmd("hi Todo guibg=NONE")
 
+	if color == "rose-pine-moon" then
+		vim.cmd("hi Normal guibg=#000000")
+		vim.cmd("hi NormalNC guibg=#000000")
+		vim.cmd("hi LineNr guibg=#000000")
+		vim.cmd("hi CursorLine guibg=#000000")
+		vim.cmd("hi TelescopeNormal guibg=#000000")
+		vim.cmd("hi TelescopeBorder guibg=#000000")
+		--vim.cmd("hi LineNrAbove guifg=#666666")
+		--vim.cmd("hi LineNrBelow guifg=#666666")
+		--vim.cmd("hi MatchParen guibg=#777777")
+		--vim.cmd("hi Delimiter guifg=#666666")
+		vim.cmd("hi MiniTablineCurrent guibg=#0a0a0a")
+		vim.cmd("hi MiniTablineFill guibg=#000000")
+		vim.cmd("hi MiniTablineModifiedHidden guibg=#000000")
+		vim.cmd("hi MiniTablineHidden guibg=#000000")
+		vim.cmd("hi MiniTablineVisible guibg=#000000")
+		vim.cmd("hi MiniTablineModifiedVisible guibg=#000000")
+	end
+
 	if color == "kintsugi-dark" then
 		vim.cmd("hi Comment guifg=#6f7b68")
 		vim.cmd("hi @comment guifg=#6f7b68")
@@ -178,7 +197,7 @@ function M.CustomColourscheme(color)
 
 	for key, hl_group in pairs(hl_groups) do
 		if hl_group.italic then
-			vim.api.nvim_set_hl(0, key, vim.tbl_extend("force", hl_group, { italic = false, bold = false }))
+			vim.api.nvim_set_hl(0, key, vim.tbl_extend("force", hl_group, { italic = false }))
 		end
 	end
 
