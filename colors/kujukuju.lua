@@ -22,6 +22,7 @@ local c = {
   comment    = "#87919D",
   gutter     = "#E0AD82",
   border     = "#21333F",
+  cursor	 = "#FFA717",
   --cursorline = "#1C2748",
   cursorline = "#191C25",
   sel_act    = "#1A3C49",
@@ -82,6 +83,7 @@ hl("VertSplit",        { fg = c.border    })
 hl("LineNr",           { fg = c.gutter    })
 hl("LineNrAbove",      { fg = c.gutter    })
 hl("LineNrBelow",      { fg = c.gutter    })
+hl("Cursor",      	   { bg = c.cursor, fg = "#202020"    })
 hl("CursorLine",       { bg = c.cursorline })
 hl("CursorLineNr",     { fg = c.fg_dim,    bg = c.cursorline })
 hl("CursorColumn",     { bg = c.cursorline })
@@ -90,7 +92,7 @@ hl("SignColumn",       { fg = c.gutter,    bg = c.bg        })
 hl("Folded",           { fg = c.fg_dim2,   bg = c.bg_panel  })
 hl("FoldColumn",       { fg = c.gutter,    bg = c.bg        })
 hl("Conceal",          { fg = c.fg_dim2   })
-hl("MatchParen",       { fg = c.bracket,  sp = c.bracket, underline = true })
+hl("MatchParen",       { fg = c.bracket,  sp = c.bracket})
 hl("Visual",           { bg = c.sel_act   })
 hl("VisualNOS",        { bg = c.sel_inact })
 hl("Search",           { fg = c.bg,        bg = c.search    })
@@ -269,6 +271,9 @@ hl("TelescopeResultsTitle",   { fg = c.fg_dim,    bg = c.bg_popup  })
 hl("TelescopePreviewTitle",   { fg = c.fg_dim,    bg = c.bg_popup  })
 hl("TelescopeSelection",      { fg = c.fg,        bg = c.sel_act   })
 hl("TelescopeMatching",       { fg = c.accent     })
+
+-- -- Mini ------------------------------------------------------------------
+--hl("MiniStatuslineModeNormal", { bg = c.fg })
 
 -- ── nvim-cmp ──────────────────────────────────────────────────────────────
 hl("CmpNormal",               { bg = c.bg_popup  })

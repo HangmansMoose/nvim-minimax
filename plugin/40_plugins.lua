@@ -181,9 +181,6 @@ now_if_args(function()
     'https://github.com/mason-org/mason.nvim',
     'https://github.com/mason-org/mason-lspconfig.nvim',
     'https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim',
-
-	-- Zig 
-	'https://github.com/ziglang/zig.vim'
   })
  --  This function gets run when an LSP attaches to a particular buffer.
       --    That is to say, every time a new file is opened that is associated with
@@ -242,7 +239,9 @@ now_if_args(function()
         ols = {}, -- odin language server
         pyright = {},
         rust_analyzer = {},
-        zls = {}, 
+        zls = {
+			cmd = { 'zls' },
+		}, 
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
         --
@@ -352,3 +351,23 @@ Config.now(function()
 	require('plugins.debug')
 	require('plugins.nvim-tree')
 end)
+
+-- Install `ziglang/zig.vim` using the built-in plugin manager (Neovim 0.12.0+)
+-- A tool like `vim-plug` or `lazy.nvim` can also be used instead.
+vim.pack.add({
+  'https://codeberg.org/ziglang/zig.vim',
+})
+
+-- don't show parse errors in a separate window
+vim.g.zig_fmt_parse_errors = 0
+-- disable format-on-save from `ziglang/zig.vim`
+vim.g.zig_fmt_autosave = 0
+-- enable  format-on-save from vim.lsp + ZLS
+--
+-- Formatting with ZLS matches `zig fmt`.
+vim.api.nvim_create_autocmd('BufWritePre', {
+  pattern = { "*.zig", "*.zon" },
+  callback = function(ev)
+    vim.lsp.buf.format()
+  end
+})
