@@ -259,7 +259,8 @@ nmap_leader('tq', '<Cmd>Trouble qflist toggle<CR>', 'Toggle Trouble qflist')
 nmap_leader('tl', '<Cmd>Trouble lsp toggle focus=false win.position=below<CR>', 'Toggle Trouble LSP only')
 
 
-nmap_leader('ee', '<Cmd>NvimTreeToggle<CR>', 'NvimTree')
+--nmap_leader('ee', '<Cmd>NvimTreeToggle<CR>', 'NvimTree')
+vim.keymap.set('n', '<leader>x', '<Cmd>Neotree toggle<CR>', { desc = 'NeoTree reveal', silent = true })
 -- MiniNofify History in floating window
 vim.keymap.set('n',  '<leader>n', function()
   -- Ensure mini.notify is loaded

@@ -60,7 +60,7 @@
 
   -- Enable undo/redo changes even after closing and reopening a file
   vim.o.undofile = true
-
+  vim.o.swapfile = false
   -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
   vim.o.ignorecase = true
   vim.o.smartcase = true
@@ -106,12 +106,13 @@
   -- Allow project dir functions defined by .nvim.lua file
   vim.o.exrc = true
 
+  vim.opt.guicursor = "n-v-c:block-Cursor,i-ci-ve:ver25-Cursor"
 
   -- Allow project dir functions defined by .nvim.lua file
   vim.o.exrc = true
 
   vim.o.termguicolors  = true
-  vim.o.shell = 'pwsh.exe -NoLogo -NoExit'
+  vim.o.shell = 'pwsh.exe -NoExit'
   -- Neovide ===============================================================
   if vim.g.neovide then
 	vim.opt.guicursor = "n-v-c:block-Cursor,i-ci-ve:ver25-Cursor"
@@ -149,14 +150,14 @@
 --vim.o.cursorline     = true       -- Enable current line highlighting
 --vim.o.linebreak      = true       -- Wrap lines at 'breakat' (if 'wrap' is set)
 --vim.o.list           = false       -- Show helpful text indicators
---vim.o.number         = true       -- Show line numbers
+vim.o.number         = true       -- Show line numbers
 --vim.o.relativenumber = true
 --vim.o.pumborder      = 'single'   -- Use border in popup menu
 --vim.o.pumheight      = 10         -- Make popup menu smaller
 --vim.o.pummaxwidth    = 100        -- Make popup menu not too wide
 --vim.o.ruler          = false      -- Don't show cursor coordinates
 --vim.o.shortmess      = 'CFOSWaco' -- Disable some built-in completion messages
---vim.o.showmode       = false      -- Don't show mode in command line
+vim.o.showmode       = false      -- Don't show mode in command line
 --vim.o.signcolumn     = 'yes'      -- Always show signcolumn (less flicker)
 --vim.o.splitbelow     = true       -- Horizontal splits will be below
 --vim.o.splitkeep      = 'screen'   -- Reduce scroll during window split
@@ -203,6 +204,12 @@
 --vim.o.completeopt     = 'menuone,noselect,fuzzy,nosort' -- Use custom behavior
 --vim.o.completetimeout = 100                             -- Limit sources delay
 
+-- don't show parse errors in a separate window
+vim.g.zig_fmt_parse_errors = 0
+-- disable format-on-save from `ziglang/zig.vim`
+vim.g.zig_fmt_autosave = 0
+-- enable  format-on-save from vim.lsp + ZLS
+
 -- Neovide ===============================================================
 vim.g.neovide_cursor_animation_length = 0
 vim.g.neovide_cursor_trail_size = 0
@@ -215,6 +222,14 @@ vim.g.neovide_opacity = 1.00
 vim.g.neovide_normal_opacity = 1.00
 
 -- Autocommands ===============================================================
+
+-- Formatting with ZLS matches `zig fmt`.
+vim.api.nvim_create_autocmd('BufWritePre', {
+  pattern = { "*.zig", "*.zon" },
+  callback = function(ev)
+    vim.lsp.buf.format()
+  end
+})
 
 -- Don't auto-wrap comments and don't insert comment leader after hitting 'o'.
 -- Do on `FileType` to always override these changes from filetype plugins.

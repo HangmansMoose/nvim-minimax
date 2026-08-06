@@ -83,6 +83,7 @@ require('vim._core.ui2').enable({
 -- Make concise helpers for installing/adding plugins in two stages
 local add = vim.pack.add
 local now_if_args, later = Config.now_if_args, Config.later
+local now = Config.now
 
 -- Tree-sitter ================================================================
 
@@ -182,44 +183,44 @@ now_if_args(function()
     'https://github.com/mason-org/mason-lspconfig.nvim',
     'https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim',
   })
- --  This function gets run when an LSP attaches to a particular buffer.
-      --    That is to say, every time a new file is opened that is associated with
-      --    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
-      --    function will be executed to configure the current buffer
-      vim.api.nvim_create_autocmd('LspAttach', {
-        group = vim.api.nvim_create_augroup('hangmansmoose-lsp-attach', { clear = true }),
-        callback = function(event)
-          -- NOTE: Remember that Lua is a real programming language, and as such it is possible
-          -- to define small helper and utility functions so you don't have to repeat yourself.
-          --
-          -- In this case, we create a function that lets us more easily define mappings specific
-          -- for LSP related items. It sets the mode, buffer and description for us each time.
-          local map = function(keys, func, desc, mode)
-            mode = mode or 'n'
-            vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
-          end
+ ----  This function gets run when an LSP attaches to a particular buffer.
+ --     --    That is to say, every time a new file is opened that is associated with
+ --     --    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
+ --     --    function will be executed to configure the current buffer
+ --     vim.api.nvim_create_autocmd('LspAttach', {
+ --       group = vim.api.nvim_create_augroup('hangmansmoose-lsp-attach', { clear = true }),
+ --       callback = function(event)
+ --         -- NOTE: Remember that Lua is a real programming language, and as such it is possible
+ --         -- to define small helper and utility functions so you don't have to repeat yourself.
+ --         --
+ --         -- In this case, we create a function that lets us more easily define mappings specific
+ --         -- for LSP related items. It sets the mode, buffer and description for us each time.
+ --         local map = function(keys, func, desc, mode)
+ --           mode = mode or 'n'
+ --           vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
+ --         end
 
-          -- Rename the variable under your cursor.
-          --  Most Language Servers support renaming across files, etc.
-          map('grn', vim.lsp.buf.rename, '[R]e[n]ame')
+ --         -- Rename the variable under your cursor.
+ --         --  Most Language Servers support renaming across files, etc.
+ --         map('gn', vim.lsp.buf.rename, '[R]e[n]ame')
 
-          -- Execute a code action, usually your cursor needs to be on top of an error
-          -- or a suggestion from your LSP for this to activate.
-          map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
+ --         -- Execute a code action, usually your cursor needs to be on top of an error
+ --         -- or a suggestion from your LSP for this to activate.
+ --         map('ga', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
 
-          -- WARN: This is not Goto Definition, this is Goto Declaration.
-          --  For example, in C this would take you to the header.
-          map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+ --         -- WARN: This is not Goto Definition, this is Goto Declaration.
+ --         --  For example, in C this would take you to the header.
+ --         map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
-          -- The following code creates a keymap to toggle inlay hints in your
-          -- code, if the language server you are using supports them
-          --
-          -- This may be unwanted, since they displace some of your code
-          if client and client:supports_method('textDocument/inlayHint', event.buf) then
-            map('<leader>th', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end, '[T]oggle Inlay [H]ints')
-          end
-        end,
-      })
+ --         -- The following code creates a keymap to toggle inlay hints in your
+ --         -- code, if the language server you are using supports them
+ --         --
+ --         -- This may be unwanted, since they displace some of your code
+ --         if client and client:supports_method('textDocument/inlayHint', event.buf) then
+ --           map('<leader>th', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end, '[T]oggle Inlay [H]ints')
+ --         end
+ --       end,
+ --     })
 
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -236,7 +237,14 @@ now_if_args(function()
           },
         },
         gopls = {},
-        ols = {}, -- odin language server
+        ols = {
+			cmd = { 'ols.exe' },
+  			filetypes = { 'odin' },
+  			root_dir = function(bufnr, on_dir)
+    		local fname = vim.api.nvim_buf_get_name(bufnr)
+    		on_dir(util.root_pattern('ols.json', '.git', '*.odin')(fname))
+  		end,
+		}, -- odin language server
         pyright = {},
         rust_analyzer = {},
         zls = {
@@ -270,70 +278,73 @@ now_if_args(function()
       end
 end)
 
+-- PLUGINS ===========================================
+now(function()
+  add({
+	-- TELESCOPE =====================================
+    'https://github.com/nvim-lua/plenary.nvim',
+    'https://github.com/nvim-telescope/telescope.nvim',
+    'https://github.com/nvim-telescope/telescope-ui-select.nvim',
+    'https://github.com/nvim-telescope/telescope-file-browser.nvim',
+	'https://github.com/nvim-telescope/telescope-symbols.nvim',
+    'https://github.com/nvim-telescope/telescope-fzf-native.nvim',
 
--- FOLKE ===========================================
-now_if_args(function()
-  add({ 
+	-- FOLKE =========================================
     'https://github.com/folke/trouble.nvim',
     'https://github.com/folke/todo-comments.nvim',
-    'https://github.com/nvim-lua/plenary.nvim'
+    'https://github.com/nvim-lua/plenary.nvim',
+	'https://github.com/NoahTheDuke/vim-just',
+
+    
   })
-  require('trouble').setup()
-  require("todo-comments").setup({
-				keywords = {
-					TODO = { color = "#ff0000" },
-					HACK = { color = "#ff6600" },
-					NOTE = { color = "#008000" },
-					FIXME = { color = "#f06292" },
-					LEFTOFF = { color = "#ffff99" },
-					nocheckin = { color = "#ff00ff" },
-				},
-				-- Pattern to hightlight the keywords
-				highlight = {
-					pattern = [[(KEYWORDS|keywords)\s*(\([^\)]*\))?:]],
-					keyword = "fg",
-					after = "",
-					before = "",
-				},
-				gui_style = {
-					fg = "BOLD",
-				},
-			})
+
+
+	require('trouble').setup()
+	require("todo-comments").setup({
+			keywords = {
+				TODO = { color = "#ff0000" },
+				HACK = { color = "#ff6600" },
+				NOTE = { color = "#008000" },
+				FIXME = { color = "#f06292" },
+				LEFTOFF = { color = "#ffff99" },
+				nocheckin = { color = "#ff00ff" },
+			},
+			-- Pattern to hightlight the keywords
+			highlight = {
+				pattern = [[(KEYWORDS|keywords)\s*(\([^\)]*\))?:]],
+				keyword = "fg",
+				after = "",
+				before = "",
+			},
+			gui_style = {
+				fg = "BOLD",
+			},
+		})
+	require('plugins.telescope')
+	require('plugins.overseer')
+	require('plugins.neotree')
+	--require('plugins.debug')
+
 end)
 
--- Jusfile syntax highlighting
-now_if_args(function() 
-	add({"https://github.com/NoahTheDuke/vim-just"})
-end)
-
--- COLOURS ====================================================================
-Config.now(function()
---  -- Install only those that you need
-  add({
-    'https://github.com/WTFox/jellybeans.nvim',
-    'https://github.com/blazkowolf/gruber-darker.nvim',
-    'https://github.com/rebelot/kanagawa.nvim',
-    --'https://github.com/alljokecake/naysayer-theme.nvim',
-    'https://github.com/savq/melange-nvim',
-    'https://github.com/54L1M/Oshen.nvim',
-    --'https://github.com/szymonwilczek/arete.nvim'
-	'https://github.com/oskarnurm/koda.nvim',
-	'https://github.com/metalelf0/kintsugi-nvim',
+-- THEMES ========================================
+add({
+	'https://github.com/WTFox/jellybeans.nvim',
+	'https://github.com/blazkowolf/gruber-darker.nvim',
+	'https://github.com/rebelot/kanagawa.nvim',
+	'https://github.com/alljokecake/naysayer-theme.nvim',
+	'https://github.com/savq/melange-nvim',
+	'https://github.com/54L1M/Oshen.nvim',
 	'https://github.com/rose-pine/neovim',
 	'https://github.com/armannikoyan/rusty',
-	'https://github.com/aliqyan-21/darkvoid.nvim',
-	'https://github.com/kuri-sun/yoda.nvim',
-	'https://github.com/NLKNguyen/papercolor-theme',
-	'https://github.com/RostislavArts/naysayer.nvim',
 	'https://github.com/dchinmay2/alabaster.nvim',
 	'https://github.com/lodestone/lodestone.vim',
-  })
---   -- Enable only one
---   vim.cmd('colo gruvbuddy')
-end)
+	'https://github.com/hopsk/tomorrow-night-bright-rstudio.nvim',
+	'https://github.com/webhooked/kanso.nvim',
+})
 
 local colours = require("utils.colors")
-colours.CustomColourscheme("kujukuju")
+colours.CustomColourscheme("tomorrow-night-bright-r")
 
 -- TODO: This needs a better place to live. Makes the custom color function available as a command
 vim.api.nvim_create_user_command("Colour", function(args)
@@ -346,28 +357,3 @@ vim.api.nvim_create_user_command("Colour", function(args)
     }
 )
 
-Config.now(function()
-	require('plugins.telescope')
-	require('plugins.debug')
-	require('plugins.nvim-tree')
-end)
-
--- Install `ziglang/zig.vim` using the built-in plugin manager (Neovim 0.12.0+)
--- A tool like `vim-plug` or `lazy.nvim` can also be used instead.
-vim.pack.add({
-  'https://codeberg.org/ziglang/zig.vim',
-})
-
--- don't show parse errors in a separate window
-vim.g.zig_fmt_parse_errors = 0
--- disable format-on-save from `ziglang/zig.vim`
-vim.g.zig_fmt_autosave = 0
--- enable  format-on-save from vim.lsp + ZLS
---
--- Formatting with ZLS matches `zig fmt`.
-vim.api.nvim_create_autocmd('BufWritePre', {
-  pattern = { "*.zig", "*.zon" },
-  callback = function(ev)
-    vim.lsp.buf.format()
-  end
-})
