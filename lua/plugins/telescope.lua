@@ -1,17 +1,3 @@
--- TELESCOPE (MOVE THIS TO ITS OWN FILE)
-local telescope_plugins = {
-    'https://github.com/nvim-lua/plenary.nvim',
-    'https://github.com/nvim-telescope/telescope.nvim',
-    'https://github.com/nvim-telescope/telescope-ui-select.nvim',
-    'https://github.com/nvim-telescope/telescope-file-browser.nvim',
-	'https://github.com/nvim-telescope/telescope-symbols.nvim',
-    'https://github.com/nvim-telescope/telescope-fzf-native.nvim',
-}
-
-  
-  -- NOTE: You can install multiple plugins at once
-vim.pack.add(telescope_plugins)
-
 local actions = require("telescope.actions")
 local action_layout = require("telescope.actions.layout")
 local fb_actions = require("telescope").extensions.file_browser.actions
