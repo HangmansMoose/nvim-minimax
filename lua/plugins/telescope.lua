@@ -32,42 +32,6 @@ local fb_actions = require("telescope").extensions.file_browser.actions
    --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
    --   },
    },
-   pickers = {
-     buffers = {
-       previewer = false,
-       theme = "dropdown",
-       intitial_mode = "insert"
-     },
-     find_files = {
- 				theme = 'dropdown', -- 'ivy', 'dropdown', 'cursor'
- 				-- layout_strategy = 'vertical',
- 				-- layout_config = { height = 0.9 },
- 				-- previewer = false,
- 				path_display = { "smart" },
- 				layout_config = {
- 					--prompt_position = "bottom",
- 					preview_width = 0.5,
- 					-- width = 0.7,
- 				},
- 				sorting_strategy = "ascending",
- 			},
- 			help_tags = {
- 				theme = "cursor",
- 			},
- 			symbols = {
- 				theme = "cursor",
- 			},
- 			registers = {
- 				theme = "dropdown",
- 			},
- 			grep_string = {
- 				initial_mode = "normal",
- 				theme = "dropdown",
- 			},
- 			live_grep = {
- 				theme = "dropdown",
- 			},
- 		},
    extensions = {
      ['ui-select'] = { require('telescope.themes').get_dropdown() },
      file_browser = {
