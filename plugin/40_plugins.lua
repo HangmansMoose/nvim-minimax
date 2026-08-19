@@ -320,7 +320,7 @@ now(function()
 				fg = "BOLD",
 			},
 		})
-	-- require('plugins.telescope')
+	require('plugins.telescope')
 	require('plugins.overseer')
 	--require('plugins.neotree')
 	--require('plugins.debug')
@@ -328,32 +328,32 @@ now(function()
 end)
 
 -- FFF ===========================================
-vim.pack.add({ 'https://github.com/dmtrKovalenko/fff.nvim' })
+--vim.pack.add({ 'https://github.com/dmtrKovalenko/fff.nvim' })
+--
+--require('fff').setup({
+--  	lazy_sync = true,
+--	layout = {
+--		prompt_position = 'top',
+--	},
+--    debug = { 
+--		enabled = true, 
+--		show_scores = true 
+--	},
+--})
+--
+--vim.api.nvim_create_autocmd('PackChanged', {
+--  callback = function(ev)
+--    local name, kind = ev.data.spec.name, ev.data.kind
+--    if name == 'fff.nvim' and (kind == 'install' or kind == 'update') then
+--      if not ev.data.active then vim.cmd.packadd('fff.nvim') end
+--      require('fff.download').download_or_build_binary()
+--    end
+--  end,
+--})
 
-require('fff').setup({
-  	lazy_sync = true,
-	layout = {
-		prompt_position = 'top',
-	},
-    debug = { 
-		enabled = true, 
-		show_scores = true 
-	},
-})
-
-vim.api.nvim_create_autocmd('PackChanged', {
-  callback = function(ev)
-    local name, kind = ev.data.spec.name, ev.data.kind
-    if name == 'fff.nvim' and (kind == 'install' or kind == 'update') then
-      if not ev.data.active then vim.cmd.packadd('fff.nvim') end
-      require('fff.download').download_or_build_binary()
-    end
-  end,
-})
-
-vim.keymap.set('n', 'ff', function() require('fff').find_files() end, { desc = 'FFFind files' })
-vim.keymap.set('n', 'fg', function() require('fff').live_grep() end, { desc = 'FFFind files' })
-vim.keymap.set('n', 'fn', function() require('fff').find_files_in_dir(function() vim.fn.stdpath('config') end) end, { desc = 'FFFind files' })
+--vim.keymap.set('n', 'ff', function() require('fff').find_files() end, { desc = 'FFFind files' })
+--vim.keymap.set('n', 'fg', function() require('fff').live_grep() end, { desc = 'FFFind files' })
+--vim.keymap.set('n', 'fn', function() require('fff').find_files_in_dir(function() vim.fn.stdpath('config') end) end, { desc = 'FFFind files' })
 -- THEMES ========================================
 add({
 	'https://github.com/WTFox/jellybeans.nvim',
@@ -367,7 +367,7 @@ add({
 
 --now(function() vim.cmd('colorscheme luna') end)
 local colours = require("utils.colors")
-colours.CustomColourscheme("luna")
+colours.CustomColourscheme("oshen-night")
 
 -- TODO: This needs a better place to live. Makes the custom color function available as a command
 vim.api.nvim_create_user_command("Colour", function(args)
