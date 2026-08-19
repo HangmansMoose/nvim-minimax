@@ -28,7 +28,7 @@ function M.CustomColourscheme(color)
 		vim.cmd("hi MiniTablineModifiedVisible guibg=#000000")
 	end
 
-	if color == "kanso" or color == "kanso-ink" then
+	if color == "kanso" or color == "kanso-ink" or color == "kanso-zen" then
 		vim.cmd("hi Comment guifg=#6f7b68")
 		vim.cmd("hi @comment guifg=#6f7b68")
 		vim.cmd("hi Normal guibg=#050505")
@@ -241,23 +241,16 @@ function M.CustomColourscheme(color)
 	if color == "oshen-night" then
 		vim.cmd("hi Normal guibg=#050505")
 		vim.cmd("hi NormalNC guibg=#050505")
-		vim.cmd("hi LineNr guibg=#050505 guifg=#E0AD82")
-		vim.cmd("hi LineNrAbove guifg=#E0AD82")
-		vim.cmd("hi LineNrBelow guifg=#E0AD82")
-		vim.cmd("hi Comment guifg=#87919D")
-		vim.cmd("hi @comment guifg=#87919D")
-		vim.cmd('hi CursorLine guibg=#131c2b')
-		vim.cmd("hi Cursor guibg=#FFA717 guifg=#303030")
-		vim.cmd("hi MiniTablineCurrent guibg=#151515")
-		vim.cmd("hi MiniTablineFill guibg=#050505")
-		vim.cmd("hi MiniTablineModifiedHidden guibg=#050505")
-		vim.cmd("hi MiniTablineHidden guibg=#050505")
-		vim.cmd("hi MiniTablineVisible guibg=#050505")
-		vim.cmd("hi MiniTablineModifiedVisible guibg=#050505")
-
-
+		vim.cmd("hi Comment guifg=#87919d")
+		vim.cmd("hi @comment guifg=#87919d")
+		vim.cmd("hi @lsp.type.comment guifg=#87919d")
+		--vim.cmd("hi LineNr guibg=#050505")
+		vim.cmd("hi LineNrAbove guifg=#87919d")
+		vim.cmd("hi LineNrBelow guifg=#87919d")
 		--vim.cmd'hi TabLine guifg=#e6dbd1'
 		--vim.cmd'hi TabLineNC guifg=#151515'
+		--vim.cmd'hi CursorLine guibg=#111144'
+		--vim.cmd("hi Cursor guibg=#00ff33 guifg=#303030")
 		--vim.cmd("hi cTodo guibg=#121212")
 	end
 
