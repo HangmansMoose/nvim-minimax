@@ -28,7 +28,7 @@
  -- Allow project dir functions defined by .nvim.lua file
   vim.o.exrc = true
 
-  vim.o.shell = 'pwsh.exe -NoExit'
+  -- vim.o.shell = 'pwsh.exe -NoExit'
   -- Neovide ===============================================================
   vim.g.neovide_cursor_animation_length = 0
   vim.g.neovide_cursor_trail_size = 0
