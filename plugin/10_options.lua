@@ -25,11 +25,9 @@
   -- Set to true if you have a Nerd Font installed and selected in the terminal
   vim.g.have_nerd_font = true
 
-  vim.o.shada = "'100,<50,s10,:1000,/100,@100,h" -- Limit ShaDa file (for startup)
  -- Allow project dir functions defined by .nvim.lua file
   vim.o.exrc = true
 
-  vim.o.termguicolors  = true
   vim.o.shell = 'pwsh.exe -NoExit'
   -- Neovide ===============================================================
   vim.g.neovide_cursor_animation_length = 0
@@ -59,6 +57,8 @@ vim.o.mouse       = 'a'            -- Enable mouse
 vim.o.mousescroll = 'ver:25,hor:6' -- Customize mouse scroll
 vim.o.switchbuf   = 'usetab'       -- Use already opened buffers when switching
 vim.o.undofile    = true           -- Enable persistent undo
+vim.opt.swapfile  = false
+vim.o.confirm = true
 
 vim.o.shada = "'100,<50,s10,:1000,/100,@100,h" -- Limit ShaDa file (for startup)
 
@@ -89,11 +89,12 @@ vim.o.winborder      = 'single'   -- Use border in floating windows
 vim.o.wrap           = false      -- Don't visually wrap lines (toggle with \w)
 vim.o.termguicolors  = true
 
+vim.o.guicursor = "n-v-c:block-Cursor/lCursor,i-ci-ve:ver25-Cursor/lCursor"
 vim.o.cursorlineopt  = 'screenline,number' -- Show cursor line per screen line
 
 ---- Special UI symbols. More is set via 'mini.basics' later.
 vim.o.fillchars = 'eob: ,fold:╌'
-vim.o.listchars = 'extends:…,nbsp:␣,precedes:…,tab:> '
+--vim.o.listchars = 'extends:…,nbsp:␣,precedes:…,tab:> '
 --
 ---- Folds (see `:h fold-commands`, `:h zM`, `:h zR`, `:h zA`, `:h zj`)
 vim.o.foldlevel   = 10       -- Fold nothing by default; set to 0 or 1 to fold
@@ -108,11 +109,10 @@ vim.o.formatoptions = 'rqnl1j'-- Improve comment editing
 vim.o.ignorecase    = true    -- Ignore case during search
 vim.o.incsearch     = true    -- Show search matches while typing
 vim.o.infercase     = true    -- Infer case in built-in completion
-vim.o.shiftwidth    = 2       -- Use this number of spaces for indentation
+vim.o.shiftwidth    = 4       -- Use this number of spaces for indentation
 vim.o.smartcase     = true    -- Respect case if search pattern has upper case
 vim.o.smartindent   = true    -- Make indenting smart
-vim.o.spelloptions  = 'camel' -- Treat camelCase word parts as separate words
-vim.o.tabstop       = 2       -- Show tab as this number of spaces
+vim.o.tabstop       = 4       -- Show tab as this number of spaces
 vim.o.virtualedit   = 'block' -- Allow going past end of line in blockwise mode
 
 vim.o.iskeyword = '@,48-57,_,192-255,-' -- Treat dash as `word` textobject part
