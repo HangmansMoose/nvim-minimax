@@ -295,6 +295,9 @@ now(function()
     'https://github.com/nvim-lua/plenary.nvim',
 	--'https://github.com/NoahTheDuke/vim-just',
 
+	-- THE POPE ======================================
+	'https://github.com/tpope/vim-dispatch'
+
     
   })
 
@@ -354,20 +357,49 @@ end)
 --vim.keymap.set('n', 'ff', function() require('fff').find_files() end, { desc = 'FFFind files' })
 --vim.keymap.set('n', 'fg', function() require('fff').live_grep() end, { desc = 'FFFind files' })
 --vim.keymap.set('n', 'fn', function() require('fff').find_files_in_dir(function() vim.fn.stdpath('config') end) end, { desc = 'FFFind files' })
+
+vim.keymap.set('n', '<M-c>', function()
+  local qf_exists = false
+  -- check if any of the open buffers are the quickfix buffer
+  for _, win in pairs(vim.fn.getwininfo()) do
+    if win.quickfix == 1 then
+      qf_exists = true
+    end
+  end
+
+  if qf_exists then
+    vim.cmd('cclose')
+  else
+    vim.cmd('copen')
+  end
+end, { desc = 'Toggle Quickfix Window' })
+
+vim.keymap.set("n", "<M-n>", "<cmd>cnext<cr>", { desc = "Next Quickfix item" } )
+vim.keymap.set("n", "<M-p>", "<cmd>cprev<cr>", { desc = "Previous Quickfix item" } )
+vim.keymap.set("n", "<M-m>", "<cmd>Make<cr>", { desc = "[M]ake" } )
+
+
 -- THEMES ========================================
 add({
 	'https://github.com/WTFox/jellybeans.nvim',
-	'https://github.com/WTFox/luna.nvim',
-	'https://github.com/blazkowolf/gruber-darker.nvim',
-	'https://github.com/savq/melange-nvim',
-	'https://github.com/54L1M/Oshen.nvim',
-	'https://github.com/hopsk/tomorrow-night-bright-rstudio.nvim',
+    'https://github.com/WTFox/luna.nvim',
+    'https://github.com/blazkowolf/gruber-darker.nvim',
+    'https://github.com/rebelot/kanagawa.nvim',
+    'https://github.com/alljokecake/naysayer-theme.nvim',
+    'https://github.com/54L1M/Oshen.nvim',
+    'https://github.com/oskarnurm/koda.nvim',
+	'https://github.com/metalelf0/kintsugi-nvim',
+	'https://github.com/kuri-sun/yoda.nvim',
+	'https://github.com/dchinmay2/alabaster.nvim',
+	'https://github.com/lodestone/lodestone.vim',
 	'https://github.com/webhooked/kanso.nvim',
+    'https://github.com/datsfilipe/vesper.nvim',
+    'https://github.com/ThorstenRhau/token'
 })
 
 --now(function() vim.cmd('colorscheme luna') end)
 local colours = require("utils.colors")
-colours.CustomColourscheme("oshen-night")
+colours.CustomColourscheme("kintsugi-dark")
 
 -- TODO: This needs a better place to live. Makes the custom color function available as a command
 vim.api.nvim_create_user_command("Colour", function(args)
