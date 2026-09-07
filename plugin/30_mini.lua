@@ -33,7 +33,7 @@ local now, now_if_args, later = Config.now, Config.now_if_args, Config.later
 -- - `:h mini.nvim-color-schemes` - list of other color schemes
 -- - `:h MiniHues-examples` - how to define highlighting with 'mini.hues'
 -- - 'plugin/40_plugins.lua' honorable mentions - other good color schemes
---now(function() vim.cmd('colorscheme miniwinter') end)
+now(function() vim.cmd('colorscheme miniwinter') end)
 
 -- You can try these other 'mini.hues'-based color schemes (uncomment with `gcc`):
 -- now(function() vim.cmd('colorscheme minispring') end)
@@ -93,14 +93,7 @@ end)
 --
 -- See also:
 -- - `:h MiniNotify.config` for some of common configuration examples.
-now(function() require('mini.notify').setup({
-  ERROR = { duration = 10000 },
-  lsp_progress = {
-    duration_last = 5000
-  }
-})
-
- end)
+now(function() require('mini.notify').setup() end)
 
 -- Session management. A thin wrapper around `:h mksession` that consistently
 -- manages session files. Example usage:
@@ -118,7 +111,7 @@ now(function() require('mini.sessions').setup() end)
 -- See also:
 -- - `:h MiniStarter-example-config` - non-default config examples
 -- - `:h MiniStarter-lifecycle` - how to work with Starter buffer
--- now(function() require('mini.starter').setup() end)
+--now(function() require('mini.starter').setup() end)
 
 -- Statusline. Sets `:h 'statusline'` to show more info in a line below window.
 -- Example usage:
@@ -131,34 +124,7 @@ now(function() require('mini.sessions').setup() end)
 -- See also:
 -- - `:h MiniStatusline-example-content` - example of default content. Use it to
 --   configure a custom statusline by setting `config.content.active` function.
-now(function() require('mini.statusline').setup({
-  use_icons = true,
-  section_location = function() return '%2l:%-2v' end,
-  --sections = {
-  --  active = {
-  --     
-  --  }
-  --}
-  combine_groups = function()
-    local mode, mode_hl = MiniStatusline.section_mode({ trunc_width = 120 })
-    local diagnostics   = MiniStatusline.section_diagnostics({ trunc_width = 75 })
-    local lsp           = MiniStatusline.section_lsp({ trunc_width = 75 })
-    local filename      = MiniStatusline.section_filename({ trunc_width = 140 })
-    local fileinfo      = MiniStatusline.section_fileinfo({ trunc_width = 120 })
-    local location      = MiniStatusline.section_location({ trunc_width = 75 })
-    local search        = MiniStatusline.section_searchcount({ trunc_width = 75 })
-
-    return {
-      { hl = mode_hl,                  strings = { mode } },
-      { hl = 'MiniStatuslineDevinfo',  strings = { diagnostics, lsp } },
-      '%<', -- Mark general truncate point
-      { hl = 'MiniStatuslineFilename', strings = { filename } },
-      '%=', -- End left alignment
-      { hl = 'MiniStatuslineFileinfo', strings = { fileinfo } },
-      { hl = mode_hl,                  strings = { search, location } },
-    }
-  end})
-end)
+now(function() require('mini.statusline').setup() end)
 
 -- Tabline. Sets `:h 'tabline'` to show all listed buffers in a line at the top.
 -- Buffers are ordered as they were created. Navigate with `[b` and `]b`.
@@ -195,34 +161,34 @@ now(function() require('mini.tabline').setup() end)
 --
 -- It also works with snippet candidates provided by LSP server. Best experience
 -- when paired with 'mini.snippets' (which is set up in this file).
---now_if_args(function()
---  -- Customize post-processing of LSP responses for a better user experience.
---  -- Don't show 'Text' suggestions (usually noisy) and show snippets last.
---  local process_items_opts = { kind_priority = { Text = -1, Snippet = 99 } }
---  local process_items = function(items, base)
---    return MiniCompletion.default_process_items(items, base, process_items_opts)
---  end
---  require('mini.completion').setup({
---    lsp_completion = {
---      -- Without this config autocompletion is set up through `:h 'completefunc'`.
---      -- Although not needed, setting up through `:h 'omnifunc'` is cleaner
---      -- (sets up only when needed) and makes it possible to use `<C-u>`.
---      source_func = 'omnifunc',
---      auto_setup = false,
---      process_items = process_items,
---    },
---  })
---
---  -- Set 'omnifunc' for LSP completion only when needed.
---  local on_attach = function(ev)
---    vim.bo[ev.buf].omnifunc = 'v:lua.MiniCompletion.completefunc_lsp'
---  end
---  Config.new_autocmd('LspAttach', nil, on_attach, "Set 'omnifunc'")
---
---  -- Advertise to servers that Neovim now supports certain set of completion and
---  -- signature features through 'mini.completion'.
---  vim.lsp.config('*', { capabilities = MiniCompletion.get_lsp_capabilities() })
---end)
+now_if_args(function()
+  -- Customize post-processing of LSP responses for a better user experience.
+  -- Don't show 'Text' suggestions (usually noisy) and show snippets last.
+  local process_items_opts = { kind_priority = { Text = -1, Snippet = 99 } }
+  local process_items = function(items, base)
+    return MiniCompletion.default_process_items(items, base, process_items_opts)
+  end
+  require('mini.completion').setup({
+    lsp_completion = {
+      -- Without this config autocompletion is set up through `:h 'completefunc'`.
+      -- Although not needed, setting up through `:h 'omnifunc'` is cleaner
+      -- (sets up only when needed) and makes it possible to use `<C-u>`.
+      source_func = 'omnifunc',
+      auto_setup = false,
+      process_items = process_items,
+    },
+  })
+
+  -- Set 'omnifunc' for LSP completion only when needed.
+  local on_attach = function(ev)
+    vim.bo[ev.buf].omnifunc = 'v:lua.MiniCompletion.completefunc_lsp'
+  end
+  Config.new_autocmd('LspAttach', nil, on_attach, "Set 'omnifunc'")
+
+  -- Advertise to servers that Neovim now supports certain set of completion and
+  -- signature features through 'mini.completion'.
+  vim.lsp.config('*', { capabilities = MiniCompletion.get_lsp_capabilities() })
+end)
 
 -- Navigate and manipulate file system
 --
@@ -291,7 +257,7 @@ now_if_args(function()
 
   -- Synchronize terminal emulator background with Neovim's background to remove
   -- possibly different color padding around Neovim instance
-  -- MiniMisc.setup_termbg_sync()
+  MiniMisc.setup_termbg_sync()
 end)
 
 -- Step two ===================================================================
@@ -456,7 +422,7 @@ later(function() require('mini.cmdline').setup() end)
 -- - `:h MiniColors.interactive()` - interactively tweak color scheme
 -- - `:h MiniColors-recipes` - common recipes to use during interactive tweaking
 -- - `:h MiniColors.convert()` - convert between color spaces
--- - `:h MiniColors-color-spaces` - list of supported color sapces
+-- - `:h MiniColors-color-spaces` - list of supported color spaces
 --
 -- It is not enabled by default because it is not really needed on a daily basis.
 -- Uncomment next line (use `gcc`) to enable.
@@ -494,7 +460,7 @@ later(function() require('mini.comment').setup() end)
 -- - `:h MiniDiff-overview` - overview of how module works
 -- - `:h MiniDiff-diff-summary` - available summary information
 -- - `:h MiniDiff.gen_source` - available built-in sources
---later(function() require('mini.diff').setup() end)
+later(function() require('mini.diff').setup() end)
 
 -- Git integration for more straightforward Git actions based on Neovim's state.
 -- It is not meant as a fully featured Git client, only to provide helpers that
@@ -545,6 +511,31 @@ later(function() require('mini.git').setup() end)
 -- See also:
 -- - `:h MiniIndentscope.gen_animation` - available animation rules
 later(function() require('mini.indentscope').setup() end)
+
+-- Customizable user input. Improves how Neovim and plugins ask for input.
+-- By default shows a floating window with the input prompt as title. Window
+-- position depends on the input scope: at cursor, window or editor bottom left.
+--
+-- When asked for input:
+-- - Type it. Note: this is not a regular Insert mode, but rather a customizable
+--   and comprehensive Command-line mode emulation (it allows returning a value).
+-- - Press `<Tab>` to show completion, `<C-p>` - previous history entry.
+-- - Press `<CR>` to accept or `<Esc>` to cancel.
+--
+-- Example usage (usually works together with other plugins and modules):
+-- - `saiwf` and type a function name to wrap a word with 'mini.surround'
+-- - `<Leader>lr` and type a new value to use with LSP rename
+-- - `<Leader>fg` + `<C-o>` and type a custom filter glob for `grep_live` picker
+-- - `:h vim.ui.input()` - implemented with 'mini.input'.
+--   Like after typing `<Leader>sn` to create a session asks for its name.
+--
+-- See also:
+-- - `:h MiniInput.default_key()` - default special keys available when typing
+-- - `:h MiniInput-examples` - general customization examples
+-- - `:h MiniInput.gen_view` - bundled view customizations (adjust how floating
+--   window is shown or use statusline/tabline/winbar/virtual text)
+-- - `:h MiniInput-lifecycle` - details about how a custom mode emulation works
+later(function() require('mini.input').setup() end)
 
 -- Jump to next/previous single character. It implements "smarter `fFtT` keys"
 -- (see `:h f`) that work across multiple lines, start "jumping mode", and
@@ -703,21 +694,7 @@ end)
 -- - `:h MiniPick.builtin` and `:h MiniExtra.pickers` - available pickers;
 --   Execute one either with Lua function, `:Pick <picker-name>` command, or
 --   one of `<Leader>f` mappings defined in 'plugin/20_keymaps.lua'
-later(function()
-  -- Centered on screen
-  local win_config = function()
-    local height = math.floor(0.618 * vim.o.lines)
-    local width = math.floor(0.618 * vim.o.columns)
-    return {
-      anchor = 'NW', height = height, width = width,
-      row = math.floor(0.5 * (vim.o.lines - height)),
-      col = math.floor(0.5 * (vim.o.columns - width)),
-    }
-  end
-  require('mini.pick').setup({
-   window = { config = win_config }
-  })
-end)
+later(function() require('mini.pick').setup() end)
 
 -- Manage and expand snippets (templates for a frequently used text).
 -- Typical workflow is to type snippet's (configurable) prefix and expand it
@@ -828,7 +805,7 @@ later(function() require('mini.surround').setup() end)
 -- Highlight and remove trailspace. Temporarily stops highlighting in Insert mode
 -- to reduce noise when typing. Example usage:
 -- - `<Leader>ot` - trim all trailing whitespace in a buffer
--- later(function() require('mini.trailspace').setup() end)
+later(function() require('mini.trailspace').setup() end)
 
 -- Track and reuse file system visits. Every file/directory visit is persistently
 -- tracked on disk to later reuse: show in special frecency order, etc. It also

@@ -1,3 +1,4 @@
+-- ┌────────────────────┐
 -- │ Welcome to MiniMax │
 -- └────────────────────┘
 --
@@ -41,6 +42,32 @@
 -- - "See 'path/to/file'" means see open file at described path and read it.
 -- - `:SomeCommand ...` or `:lua ...` means execute mentioned command.
 
+-- UI2 ==============================================================================================
+require('vim._core.ui2').enable({
+  enable = true, -- Whether to enable or disable the UI.
+  msg = { -- Options related to the message module.
+    ---@type 'cmd'|'msg' Default message target, either in the
+    ---cmdline or in a separate ephemeral message window.
+    ---@type string|table<string, 'cmd'|'msg'|'pager'> Default message target
+    ---or table mapping |ui-messages| kinds and triggers to a target.
+    targets = 'cmd',
+    cmd = { -- Options related to messages in the cmdline window.
+      height = 0.5 -- Maximum height while expanded for messages beyond 'cmdheight'.
+    },
+    dialog = { -- Options related to dialog window.
+      height = 0.5, -- Maximum height.
+    },
+    msg = { -- Options related to msg window.
+      height = 0.5, -- Maximum height.
+      timeout = 4000, -- Time a message is visible in the message window.
+    },
+    pager = { -- Options related to message window.
+      height = 1, -- Maximum height.
+    },
+  },
+})
+
+
 -- ┌────────────────┐
 -- │ Plugin manager │
 -- └────────────────┘
@@ -60,11 +87,38 @@
 -- - `:h vim.pack-events` - available events and plugin hooks examples
 -- - `:h vim.pack.update()` - more details about confirmation step
 
--- Enable faster startup by caching compiled Lua modules
-vim.loader.enable()
 -- Define config table to be able to pass data between scripts
 -- It is a global variable which can be use both as `_G.Config` and `Config`
 _G.Config = {}
+
+-- Define custom autocommand group and helper to create an autocommand.
+-- Autocommands are Neovim's way to define actions that are executed on events
+-- (like creating a buffer, setting an option, etc.).
+--
+-- See also:
+-- - `:h autocommand`
+-- - `:h nvim_create_augroup()`
+-- - `:h nvim_create_autocmd()`
+local gr = vim.api.nvim_create_augroup('custom-config', {})
+Config.new_autocmd = function(event, pattern, callback, desc)
+  local opts = { group = gr, pattern = pattern, callback = callback, desc = desc }
+  vim.api.nvim_create_autocmd(event, opts)
+end
+
+-- Define custom `vim.pack.add()` hook helper. Plugin data is passed as
+-- argument to the callback. See `:h vim.pack-events`.
+-- Example usage: see 'plugin/40_plugins.lua'.
+-- If any plugin requires installation hooks, add them after this function
+-- and before the first `vim.pack.add()` call.
+Config.on_packchanged = function(plugin_name, kinds, callback, desc)
+  local f = function(ev)
+    local name, kind = ev.data.spec.name, ev.data.kind
+    if not (name == plugin_name and vim.tbl_contains(kinds, kind)) then return end
+    if not ev.data.active then vim.cmd.packadd(plugin_name) end
+    callback(ev.data)
+  end
+  Config.new_autocmd('PackChanged', '*', f, desc)
+end
 
 -- 'mini.nvim' - all-in-one plugin powering most MiniMax features.
 -- See 'plugin/30_mini.lua' for how it is used.
@@ -88,61 +142,8 @@ vim.pack.add({ 'https://github.com/nvim-mini/mini.nvim' })
 -- - `:h MiniMisc.safely()`
 -- - 'plugin/30_mini.lua' and 'plugin/40_plugins.lua'
 local misc = require('mini.misc')
---misc.setup_termbg_sync({ enable = false })
 Config.now = function(f) misc.safely('now', f) end
 Config.later = function(f) misc.safely('later', f) end
 Config.now_if_args = vim.fn.argc(-1) > 0 and Config.now or Config.later
 Config.on_event = function(ev, f) misc.safely('event:' .. ev, f) end
 Config.on_filetype = function(ft, f) misc.safely('filetype:' .. ft, f) end
-
--- Define custom autocommand group and helper to create an autocommand.
--- Autocommands are Neovim's way to define actions that are executed on events
--- (like creating a buffer, setting an option, etc.).
---
--- See also:
--- - `:h autocommand`
--- - `:h nvim_create_augroup()`
--- - `:h nvim_create_autocmd()`
-local gr = vim.api.nvim_create_augroup('custom-config', {})
-Config.new_autocmd = function(event, pattern, callback, desc)
-  local opts = { group = gr, pattern = pattern, callback = callback, desc = desc }
-  vim.api.nvim_create_autocmd(event, opts)
-end
-
--- Define custom `vim.pack.add()` hook helper. See `:h vim.pack-events`.
--- Example usage: see 'plugin/40_plugins.lua'.
-Config.on_packchanged = function(plugin_name, kinds, callback, desc)
-  local f = function(ev)
-    local name, kind = ev.data.spec.name, ev.data.kind
-    if not (name == plugin_name and vim.tbl_contains(kinds, kind)) then return end
-    if not ev.data.active then vim.cmd.packadd(plugin_name) end
-    callback()
-  end
-  Config.new_autocmd('PackChanged', '*', f, desc)
-end
-
--- Stop ftplugin values from installed plugins overriding local configs
-vim.api.nvim_create_autocmd("BufEnter", {
-    callback = function()
-        vim.opt.formatoptions:remove({ "o", "r" })
-    end
-})
-
--- open nvim-tree on startup
-local function open_nvim_tree(data)
-	-- buffer is a [No Name]
-	local no_name = data.file == "" and vim.bo[data.buf].buftype == ""
-
-	-- buffer is a directory
-	local directory = vim.fn.isdirectory(data.file) == 1
-
-	if not no_name and not directory then
-		return
-	end
-
-	-- open the tree
-	require("nvim-tree.api").tree.open()
-end
-
--- NOTE: Enabling this will open the nvim tree on startup.
---vim.api.nvim_create_autocmd({ "VimEnter" }, { callback = open_nvim_tree })

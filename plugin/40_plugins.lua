@@ -5,85 +5,12 @@
 -- This file contains installation and configuration of plugins outside of MINI.
 -- They significantly improve user experience in a way not yet possible with MINI.
 -- These are mostly plugins that provide programming language specific behavior.
-
--- Stole this from kickstart while I better understand mini 
-local function run_build(name, cmd, cwd)
-    local result = vim.system(cmd, { cwd = cwd }):wait()
-    if result.code ~= 0 then
-      local stderr = result.stderr or ''
-      local stdout = result.stdout or ''
-      local output = stderr ~= '' and stderr or stdout
-      if output == '' then output = 'No output from build command.' end
-      vim.notify(('Build failed for %s:\n%s'):format(name, output), vim.log.levels.ERROR)
-    end
-  end
-
-  -- This autocommand runs after a plugin is installed or updated and
-  --  runs the appropriate build command for that plugin if necessary.
-  --
-  -- See `:help vim.pack-events`
-  vim.api.nvim_create_autocmd('PackChanged', {
-    callback = function(ev)
-      local name = ev.data.spec.name
-      local kind = ev.data.kind
-      if kind ~= 'install' and kind ~= 'update' then return end
-
-      if name == 'telescope-fzf-native.nvim' and vim.fn.executable 'make' == 1 then
-        --run_build(name,{'cmake', '-S.', '-Bbuild', '-DCMAKE_BUILD_TYPE=Release', '&&', 'cmake', '--build', 'build', '--config', 'Release', '--target', 'install'}, ev.data.path)
-        run_build(name,{'make'}, ev.data.path)
-        return
-      end
-
-      if name == 'LuaSnip' then
-        if vim.fn.has 'win32' ~= 1 and vim.fn.executable 'make' == 1 then run_build(name, { 'make', 'install_jsregexp' }, ev.data.path) end
-        return
-      end 
-	  
-	  if name == 'fff.nvim' and (kind == 'install' or kind == 'update') then
-      	if not ev.data.active then vim.cmd.packadd('fff.nvim') end
-      	require('fff.download').download_or_build_binary()
-	  end
-
-      if name == 'nvim-treesitter' then
-        if not ev.data.active then vim.cmd.packadd 'nvim-treesitter' end
-        vim.cmd 'TSUpdate'
-        return
-      end
-    end,
-  })
-
--- Ensure colour is loaded before any plugins so that it remains consistent through the load process
--- even if something errors
+--
 -- Use this file to install and configure other such plugins.
--- UI2
-require('vim._core.ui2').enable({
-  enable = true, -- Whether to enable or disable the UI.
-  msg = { -- Options related to the message module.
-    ---@type 'cmd'|'msg' Default message target, either in the
-    ---cmdline or in a separate ephemeral message window.
-    ---@type string|table<string, 'cmd'|'msg'|'pager'> Default message target
-    ---or table mapping |ui-messages| kinds and triggers to a target.
-    targets = 'cmd',
-    cmd = { -- Options related to messages in the cmdline window.
-      height = 0.5 -- Maximum height while expanded for messages beyond 'cmdheight'.
-    },
-    dialog = { -- Options related to dialog window.
-      height = 0.5, -- Maximum height.
-    },
-    msg = { -- Options related to msg window.
-      height = 0.5, -- Maximum height.
-      timeout = 4000, -- Time a message is visible in the message window.
-    },
-    pager = { -- Options related to message window.
-      height = 1, -- Maximum height.
-    },
-  },
-})
 
 -- Make concise helpers for installing/adding plugins in two stages
 local add = vim.pack.add
 local now_if_args, later = Config.now_if_args, Config.later
-local now = Config.now
 
 -- Tree-sitter ================================================================
 
@@ -128,19 +55,17 @@ now_if_args(function()
     'lua',
     'vimdoc',
     'markdown',
-    -- Add here more languages with which you want to use tree-sitter
-    'c',
-    'cpp',
-    'gdscript',
-    'zig',
-    'rust',
-    'go',
-    'json',
-    'odin',
+        -- Add here more languages with which you want to use tree-sitter
     -- To see available languages:
     -- - Execute `:=require('nvim-treesitter').get_available()`
     -- - Visit 'SUPPORTED_LANGUAGES.md' file at
     --   https://github.com/nvim-treesitter/nvim-treesitter/blob/main
+    'odin',
+    'c',
+    'cpp',
+    'zig',
+    'json',
+    'yaml'
   }
   local isnt_installed = function(lang)
     return #vim.api.nvim_get_runtime_file('parser/' .. lang .. '.*', false) == 0
@@ -174,131 +99,101 @@ end)
 -- inside 'neovim/nvim-lspconfig' plugin.
 --
 -- Add it now if file (and not 'mini.starter') is shown after startup.
-
--- LSPNESS =====================================================================================
+--
+-- Troubleshooting:
+-- - Run `:checkhealth vim.lsp` to see potential issues.
 now_if_args(function()
-  add({ 
-    'https://github.com/neovim/nvim-lspconfig',
-    'https://github.com/mason-org/mason.nvim',
-    'https://github.com/mason-org/mason-lspconfig.nvim',
-    'https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim',
-  })
- ----  This function gets run when an LSP attaches to a particular buffer.
- --     --    That is to say, every time a new file is opened that is associated with
- --     --    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
- --     --    function will be executed to configure the current buffer
- --     vim.api.nvim_create_autocmd('LspAttach', {
- --       group = vim.api.nvim_create_augroup('hangmansmoose-lsp-attach', { clear = true }),
- --       callback = function(event)
- --         -- NOTE: Remember that Lua is a real programming language, and as such it is possible
- --         -- to define small helper and utility functions so you don't have to repeat yourself.
- --         --
- --         -- In this case, we create a function that lets us more easily define mappings specific
- --         -- for LSP related items. It sets the mode, buffer and description for us each time.
- --         local map = function(keys, func, desc, mode)
- --           mode = mode or 'n'
- --           vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
- --         end
+  add({ 'https://github.com/neovim/nvim-lspconfig' })
 
- --         -- Rename the variable under your cursor.
- --         --  Most Language Servers support renaming across files, etc.
- --         map('gn', vim.lsp.buf.rename, '[R]e[n]ame')
-
- --         -- Execute a code action, usually your cursor needs to be on top of an error
- --         -- or a suggestion from your LSP for this to activate.
- --         map('ga', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
-
- --         -- WARN: This is not Goto Definition, this is Goto Declaration.
- --         --  For example, in C this would take you to the header.
- --         map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-
- --         -- The following code creates a keymap to toggle inlay hints in your
- --         -- code, if the language server you are using supports them
- --         --
- --         -- This may be unwanted, since they displace some of your code
- --         if client and client:supports_method('textDocument/inlayHint', event.buf) then
- --           map('<leader>th', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end, '[T]oggle Inlay [H]ints')
- --         end
- --       end,
- --     })
-
-      -- Enable the following language servers
-      --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
-      --  See `:help lsp-config` for information about keys and how to configure
-      ---@type table<string, vim.lsp.Config>
-      local servers = {
-        clangd = {
-          cmd = {
-            "clangd",
-            "--background-index",
-            "--header-insertion=never",
-			"--query-driver=G:/dev_tools/LLVM/bin/clang++.exe",
-            "-j=4",
-          },
-        },
-        gopls = {},
-        ols = {
-			cmd = { 'ols.exe' },
-  			filetypes = { 'odin' },
-  			root_dir = function(bufnr, on_dir)
-    		local fname = vim.api.nvim_buf_get_name(bufnr)
-    		on_dir(util.root_pattern('ols.json', '.git', '*.odin')(fname))
-  		end,
-		}, -- odin language server
-        pyright = {},
-        rust_analyzer = {},
-        zls = {
-			cmd = { 'zls' },
-		}, 
-        -- Some languages (like typescript) have entire language plugins that can be useful:
-        --    https://github.com/pmizio/typescript-tools.nvim
-        --
-        -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {},
-      }
-
-      -- Ensure the servers and tools above are installed
-      --
-      -- To check the current status of installed tools and/or manually install
-      -- other tools, you can run
-      --    :Mason
-      --
-      -- You can press `g?` for help in this menu.
-      require('mason').setup()
-      local ensure_installed = vim.tbl_keys(servers or {})
-      vim.list_extend(ensure_installed, {
-        -- You can add other tools here that you want Mason to install
-      })
-
-      require('mason-tool-installer').setup { ensure_installed = ensure_installed }
-
-      for name, server in pairs(servers) do
-        vim.lsp.config(name, server)
-        vim.lsp.enable(name)
-      end
+  -- Use `:h vim.lsp.enable()` to automatically enable language server based on
+  -- the rules provided by 'nvim-lspconfig'.
+  -- Use `:h vim.lsp.config()` or 'after/lsp/' directory to configure servers.
+  -- Uncomment and tweak the following `vim.lsp.enable()` call to enable servers.
+   vim.lsp.enable({
+     -- For example, if `lua-language-server` is installed, use `'lua_ls'` entry
+     "clangd",
+     "ols",
+     "zls",
+   })
 end)
 
--- PLUGINS ===========================================
-now(function()
-  add({
-	-- TELESCOPE =====================================
-    'https://github.com/nvim-lua/plenary.nvim',
-    'https://github.com/nvim-telescope/telescope.nvim',
-    'https://github.com/nvim-telescope/telescope-ui-select.nvim',
-    'https://github.com/nvim-telescope/telescope-file-browser.nvim',
-	'https://github.com/nvim-telescope/telescope-symbols.nvim',
-    'https://github.com/nvim-telescope/telescope-fzf-native.nvim',
+-- Formatting =================================================================
 
+-- Programs dedicated to text formatting (a.k.a. formatters) are very useful.
+-- Neovim has built-in tools for text formatting (see `:h gq` and `:h 'formatprg'`).
+-- They can be used to configure external programs, but it might become tedious.
+--
+-- The 'stevearc/conform.nvim' plugin is a good and maintained solution for easier
+-- formatting setup.
+later(function()
+  add({ 'https://github.com/stevearc/conform.nvim' })
+
+  -- See also:
+  -- - `:h Conform`
+  -- - `:h conform-options`
+  -- - `:h conform-formatters`
+  require('conform').setup({
+    default_format_opts = {
+      -- Allow formatting from LSP server if no dedicated formatter is available
+      lsp_format = 'fallback',
+    },
+    -- Map of filetype to formatters
+    -- Make sure that necessary CLI tool is available
+    -- formatters_by_ft = { lua = { 'stylua' } },
+  })
+end)
+
+-- Snippets ===================================================================
+
+-- Although 'mini.snippets' provides functionality to manage snippet files, it
+-- deliberately doesn't come with those.
+--
+-- The 'rafamadriz/friendly-snippets' is currently the largest collection of
+-- snippet files. They are organized in 'snippets/' directory (mostly) per language.
+-- 'mini.snippets' is designed to work with it as seamlessly as possible.
+-- See `:h MiniSnippets.gen_loader.from_lang()`.
+later(function() add({ 'https://github.com/rafamadriz/friendly-snippets' }) end)
+
+-- Honorable mentions =========================================================
+
+-- 'mason-org/mason.nvim' (a.k.a. "Mason") is a great tool (package manager) for
+-- installing external language servers, formatters, and linters. It provides
+-- a unified interface for installing, updating, and deleting such programs.
+--
+-- The caveat is that these programs will be set up to be mostly used inside Neovim.
+-- If you need them to work elsewhere, consider using other package managers.
+--
+-- You can use it like so:
+-- now_if_args(function()
+--   add({ 'https://github.com/mason-org/mason.nvim' })
+--   require('mason').setup()
+-- end)
+
+-- Beautiful, usable, well maintained color schemes outside of 'mini.nvim' and
+-- have full support of its highlight groups. Use if you don't like 'miniwinter'
+-- enabled in 'plugin/30_mini.lua' or other suggested 'mini.hues' based ones.
+-- Config.now(function()
+--  -- Install only those that you need
+--  add({
+--    'https://github.com/sainnhe/everforest',
+--    'https://github.com/Shatur/neovim-ayu',
+--    'https://github.com/ellisonleao/gruvbox.nvim',
+--  })
+--
+--   -- Enable only one
+--   vim.cmd('color everforest')
+-- end)
+
+now_if_args(function()
+  add({
 	-- FOLKE =========================================
     'https://github.com/folke/trouble.nvim',
     'https://github.com/folke/todo-comments.nvim',
-    'https://github.com/nvim-lua/plenary.nvim',
-	--'https://github.com/NoahTheDuke/vim-just',
+    'https://github.com/nvim-lua/plenary.nvim', -- dependency
 
 	-- THE POPE ======================================
 	'https://github.com/tpope/vim-dispatch'
 
-    
   })
 
 
@@ -323,83 +218,26 @@ now(function()
 				fg = "BOLD",
 			},
 		})
-	require('plugins.telescope')
-	require('plugins.overseer')
-	--require('plugins.neotree')
-	--require('plugins.debug')
-
 end)
 
--- FFF ===========================================
---vim.pack.add({ 'https://github.com/dmtrKovalenko/fff.nvim' })
---
---require('fff').setup({
---  	lazy_sync = true,
---	layout = {
---		prompt_position = 'top',
---	},
---    debug = { 
---		enabled = true, 
---		show_scores = true 
---	},
---})
---
---vim.api.nvim_create_autocmd('PackChanged', {
---  callback = function(ev)
---    local name, kind = ev.data.spec.name, ev.data.kind
---    if name == 'fff.nvim' and (kind == 'install' or kind == 'update') then
---      if not ev.data.active then vim.cmd.packadd('fff.nvim') end
---      require('fff.download').download_or_build_binary()
---    end
---  end,
---})
-
---vim.keymap.set('n', 'ff', function() require('fff').find_files() end, { desc = 'FFFind files' })
---vim.keymap.set('n', 'fg', function() require('fff').live_grep() end, { desc = 'FFFind files' })
---vim.keymap.set('n', 'fn', function() require('fff').find_files_in_dir(function() vim.fn.stdpath('config') end) end, { desc = 'FFFind files' })
-
-vim.keymap.set('n', '<M-c>', function()
-  local qf_exists = false
-  -- check if any of the open buffers are the quickfix buffer
-  for _, win in pairs(vim.fn.getwininfo()) do
-    if win.quickfix == 1 then
-      qf_exists = true
-    end
-  end
-
-  if qf_exists then
-    vim.cmd('cclose')
-  else
-    vim.cmd('copen')
-  end
-end, { desc = 'Toggle Quickfix Window' })
-
-vim.keymap.set("n", "<M-n>", "<cmd>cnext<cr>", { desc = "Next Quickfix item" } )
-vim.keymap.set("n", "<M-p>", "<cmd>cprev<cr>", { desc = "Previous Quickfix item" } )
-vim.keymap.set("n", "<M-m>", "<cmd>Make<cr>", { desc = "[M]ake" } )
-
+-- Colorscheme ==================================================================
 
 -- THEMES ========================================
 add({
 	'https://github.com/WTFox/jellybeans.nvim',
-    'https://github.com/WTFox/luna.nvim',
-    'https://github.com/blazkowolf/gruber-darker.nvim',
-    'https://github.com/rebelot/kanagawa.nvim',
-    'https://github.com/alljokecake/naysayer-theme.nvim',
-    'https://github.com/54L1M/Oshen.nvim',
-    'https://github.com/oskarnurm/koda.nvim',
+  'https://github.com/WTFox/luna.nvim',
+  'https://github.com/blazkowolf/gruber-darker.nvim',
+  'https://github.com/rebelot/kanagawa.nvim',
+  'https://github.com/54L1M/Oshen.nvim',
+  'https://github.com/oskarnurm/koda.nvim',
 	'https://github.com/metalelf0/kintsugi-nvim',
-	'https://github.com/kuri-sun/yoda.nvim',
-	'https://github.com/dchinmay2/alabaster.nvim',
-	'https://github.com/lodestone/lodestone.vim',
 	'https://github.com/webhooked/kanso.nvim',
-    'https://github.com/datsfilipe/vesper.nvim',
-    'https://github.com/ThorstenRhau/token'
+  'https://github.com/alljokecake/naysayer-theme.nvim',
 })
 
 --now(function() vim.cmd('colorscheme luna') end)
 local colours = require("utils.colors")
-colours.CustomColourscheme("kintsugi-dark")
+colours.CustomColourscheme("threepwood")
 
 -- TODO: This needs a better place to live. Makes the custom color function available as a command
 vim.api.nvim_create_user_command("Colour", function(args)
