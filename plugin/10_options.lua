@@ -27,6 +27,7 @@ vim.o.mouse       = 'a'            -- Enable mouse
 vim.o.mousescroll = 'ver:25,hor:6' -- Customize mouse scroll
 vim.o.switchbuf   = 'usetab'       -- Use already opened buffers when switching
 vim.o.undofile    = true           -- Enable persistent undo
+vim.o.swapfile		= false
 
 vim.o.shada = "'100,<50,s10,:1000,/100,@100,h" -- Limit ShaDa file (for startup)
 
@@ -43,13 +44,14 @@ vim.g.neovide_normal_opacity = 1.00
 vim.g.neovide_title_background_color = "#000000"
 
 -- UI =========================================================================
-vim.o.breakindent    = true       -- Indent wrapped lines to match line start
-vim.o.breakindentopt = 'list:-1'  -- Add padding for lists (if 'wrap' is set)
+--vim.o.breakindent    = true       -- Indent wrapped lines to match line start
+--vim.o.breakindentopt = 'list:-1'  -- Add padding for lists (if 'wrap' is set)
 vim.o.colorcolumn    = '+1'       -- Draw column on the right of maximum width
 vim.o.cursorline     = true       -- Enable current line highlighting
 vim.o.linebreak      = true       -- Wrap lines at 'breakat' (if 'wrap' is set)
 vim.o.list           = false       -- Show helpful text indicators
 vim.o.number         = true       -- Show line numbers
+vim.o.relativenumber = true
 vim.o.pumborder      = 'single'   -- Use border in popup menu
 vim.o.pumheight      = 10         -- Make popup menu smaller
 vim.o.pummaxwidth    = 100        -- Make popup menu not too wide
@@ -66,6 +68,7 @@ vim.o.termguicolors  = true
 vim.o.guicursor = "n-v-c:block-Cursor/lCursor,i-ci-ve:ver25-Cursor/lCursor"
 vim.o.cursorlineopt  = 'screenline,number' -- Show cursor line per screen line
 
+vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
 -- Special UI symbols. More is set via 'mini.basics' later.
 vim.o.fillchars = 'eob: ,fold:╌'
 vim.o.listchars = 'extends:…,nbsp:␣,precedes:…,tab:> '
@@ -83,11 +86,11 @@ vim.o.formatoptions = 'rqnl1j'-- Improve comment editing
 vim.o.ignorecase    = true    -- Ignore case during search
 vim.o.incsearch     = true    -- Show search matches while typing
 vim.o.infercase     = true    -- Infer case in built-in completion
-vim.o.shiftwidth    = 2       -- Use this number of spaces for indentation
+vim.o.shiftwidth    = 4       -- Use this number of spaces for indentation
 vim.o.smartcase     = true    -- Respect case if search pattern has upper case
 vim.o.smartindent   = false    -- Make indenting smart
 --vim.o.spelloptions  = 'camel' -- Treat camelCase word parts as separate words
-vim.o.tabstop       = 2       -- Show tab as this number of spaces
+vim.o.tabstop       = 4       -- Show tab as this number of spaces
 vim.o.virtualedit   = 'block' -- Allow going past end of line in blockwise mode
 
 vim.o.iskeyword = '@,48-57,_,192-255,-' -- Treat dash as `word` textobject part
@@ -137,7 +140,7 @@ local diagnostic_opts = {
   underline = { severity = { min = 'HINT', max = 'ERROR' } },
 
   -- Show more details immediately for errors on the current line
-  virtual_lines = true,
+  virtual_lines = false,
   virtual_text = {
     current_line = true,
     severity = { min = 'ERROR', max = 'ERROR' },

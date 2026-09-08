@@ -52,12 +52,12 @@ nmap(']p', '<Cmd>exe "iput "  . v:register<CR>', 'Paste Below')
 Config.leader_group_clues = {
   { mode = 'n', keys = '<Leader>b', desc = '+Buffer' },
   { mode = 'n', keys = '<Leader>e', desc = '+Explore/Edit' },
-  { mode = 'n', keys = '<Leader>f', desc = '+Find' },
+  --{ mode = 'n', keys = '<Leader>f', desc = '+Find' },
   { mode = 'n', keys = '<Leader>g', desc = '+Git' },
   { mode = 'n', keys = '<Leader>l', desc = '+Language' },
   { mode = 'n', keys = '<Leader>m', desc = '+Map' },
   { mode = 'n', keys = '<Leader>o', desc = '+Other' },
-  { mode = 'n', keys = '<Leader>s', desc = '+Session' },
+  { mode = 'n', keys = '<Leader>s', desc = '+Search' },
   { mode = 'n', keys = '<Leader>t', desc = '+Terminal' },
   { mode = 'n', keys = '<Leader>v', desc = '+Visits' },
 
@@ -130,30 +130,30 @@ nmap_leader('eQ', explore_locations,                        'Location list')
 local pick_added_hunks_buf = '<Cmd>Pick git_hunks path="%" scope="staged"<CR>'
 local pick_workspace_symbols_live = '<Cmd>Pick lsp scope="workspace_symbol_live"<CR>'
 
-nmap_leader('f/', '<Cmd>Pick history scope="/"<CR>',            '"/" history')
-nmap_leader('f:', '<Cmd>Pick history scope=":"<CR>',            '":" history')
-nmap_leader('fa', '<Cmd>Pick git_hunks scope="staged"<CR>',     'Added hunks (all)')
-nmap_leader('fA', pick_added_hunks_buf,                         'Added hunks (buf)')
-nmap_leader('fb', '<Cmd>Pick buffers<CR>',                      'Buffers')
-nmap_leader('fc', '<Cmd>Pick git_commits<CR>',                  'Commits (all)')
-nmap_leader('fC', '<Cmd>Pick git_commits path="%"<CR>',         'Commits (buf)')
-nmap_leader('fd', '<Cmd>Pick diagnostic scope="all"<CR>',       'Diagnostic workspace')
-nmap_leader('fD', '<Cmd>Pick diagnostic scope="current"<CR>',   'Diagnostic buffer')
-nmap_leader('ff', '<Cmd>Pick files<CR>',                        'Files')
-nmap_leader('fg', '<Cmd>Pick grep_live<CR>',                    'Grep live')
-nmap_leader('fG', '<Cmd>Pick grep pattern="<cword>"<CR>',       'Grep current word')
-nmap_leader('fh', '<Cmd>Pick help<CR>',                         'Help tags')
-nmap_leader('fH', '<Cmd>Pick hl_groups<CR>',                    'Highlight groups')
-nmap_leader('fl', '<Cmd>Pick buf_lines scope="all"<CR>',        'Lines (all)')
-nmap_leader('fL', '<Cmd>Pick buf_lines scope="current"<CR>',    'Lines (buf)')
-nmap_leader('fm', '<Cmd>Pick git_hunks<CR>',                    'Modified hunks (all)')
-nmap_leader('fM', '<Cmd>Pick git_hunks path="%"<CR>',           'Modified hunks (buf)')
-nmap_leader('fr', '<Cmd>Pick resume<CR>',                       'Resume')
-nmap_leader('fR', '<Cmd>Pick lsp scope="references"<CR>',       'References (LSP)')
-nmap_leader('fs', pick_workspace_symbols_live,                  'Symbols workspace (live)')
-nmap_leader('fS', '<Cmd>Pick lsp scope="document_symbol"<CR>',  'Symbols document')
-nmap_leader('fv', '<Cmd>Pick visit_paths cwd=""<CR>',           'Visit paths (all)')
-nmap_leader('fV', '<Cmd>Pick visit_paths<CR>',                  'Visit paths (cwd)')
+nmap_leader('s/', '<Cmd>Pick history scope="/"<CR>',            '"/" history')
+nmap_leader('s:', '<Cmd>Pick history scope=":"<CR>',            '":" history')
+nmap_leader('sa', '<Cmd>Pick git_hunks scope="staged"<CR>',     'Added hunks (all)')
+nmap_leader('sA', pick_added_hunks_buf,                         'Added hunks (buf)')
+nmap_leader('sb', '<Cmd>Pick buffers<CR>',                      'Buffers')
+nmap_leader('sc', [[<cmd>lua vim.cmd('Pick files scope="]] .. vim.fs.normalize(vim.fn.stdpath('config')) .. [["')<CR>]], 'Config Files')
+nmap_leader('sC', '<Cmd>Pick git_commits path="%"<CR>',         'Commits (buf)')
+nmap_leader('sd', '<Cmd>Pick diagnostic scope="all"<CR>',       'Diagnostic workspace')
+nmap_leader('sD', '<Cmd>Pick diagnostic scope="current"<CR>',   'Diagnostic buffer')
+nmap_leader('sf', '<Cmd>Pick files<CR>',                        'Files')
+nmap_leader('sg', '<Cmd>Pick grep_live<CR>',                    'Grep live')
+nmap_leader('sG', '<Cmd>Pick grep pattern="<cword>"<CR>',       'Grep current word')
+nmap_leader('sh', '<Cmd>Pick help<CR>',                         'Help tags')
+nmap_leader('sH', '<Cmd>Pick hl_groups<CR>',                    'Highlight groups')
+nmap_leader('sl', '<Cmd>Pick buf_lines scope="all"<CR>',        'Lines (all)')
+nmap_leader('sL', '<Cmd>Pick buf_lines scope="current"<CR>',    'Lines (buf)')
+nmap_leader('sm', '<Cmd>Pick git_hunks<CR>',                    'Modified hunks (all)')
+nmap_leader('sM', '<Cmd>Pick git_hunks path="%"<CR>',           'Modified hunks (buf)')
+nmap_leader('sr', '<Cmd>Pick resume<CR>',                       'Resume')
+nmap_leader('sR', '<Cmd>Pick lsp scope="references"<CR>',       'References (LSP)')
+nmap_leader('ss', pick_workspace_symbols_live,                  'Symbols workspace (live)')
+nmap_leader('sS', '<Cmd>Pick lsp scope="document_symbol"<CR>',  'Symbols document')
+nmap_leader('sv', '<Cmd>Pick visit_paths cwd=""<CR>',           'Visit paths (all)')
+nmap_leader('sV', '<Cmd>Pick visit_paths<CR>',                  'Visit paths (cwd)')
 
 -- g is for 'Git'. Common usage:
 -- - `<Leader>gs` - show information at cursor
