@@ -129,13 +129,16 @@ nmap_leader('eQ', explore_locations,                        'Location list')
 -- All these use 'mini.pick'. See `:h MiniPick-overview` for an overview.
 local pick_added_hunks_buf = '<Cmd>Pick git_hunks path="%" scope="staged"<CR>'
 local pick_workspace_symbols_live = '<Cmd>Pick lsp scope="workspace_symbol_live"<CR>'
+local pick_config_dir = function()
+	require('mini.pick').registry.files({ cwd = vim.fn.stdpath('config') })
+end
 
 nmap_leader('s/', '<Cmd>Pick history scope="/"<CR>',            '"/" history')
 nmap_leader('s:', '<Cmd>Pick history scope=":"<CR>',            '":" history')
 nmap_leader('sa', '<Cmd>Pick git_hunks scope="staged"<CR>',     'Added hunks (all)')
 nmap_leader('sA', pick_added_hunks_buf,                         'Added hunks (buf)')
 nmap_leader('sb', '<Cmd>Pick buffers<CR>',                      'Buffers')
-nmap_leader('sc', [[<cmd>lua vim.cmd('Pick files scope="]] .. vim.fs.normalize(vim.fn.stdpath('config')) .. [["')<CR>]], 'Config Files')
+nmap_leader('sc', pick_config_dir, 															'Config Files')
 nmap_leader('sC', '<Cmd>Pick git_commits path="%"<CR>',         'Commits (buf)')
 nmap_leader('sd', '<Cmd>Pick diagnostic scope="all"<CR>',       'Diagnostic workspace')
 nmap_leader('sD', '<Cmd>Pick diagnostic scope="current"<CR>',   'Diagnostic buffer')

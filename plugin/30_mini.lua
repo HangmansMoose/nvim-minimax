@@ -696,6 +696,14 @@ end)
 --   one of `<Leader>f` mappings defined in 'plugin/20_keymaps.lua'
 later(function() require('mini.pick').setup() end)
 
+local MiniPick = require('mini.pick')
+-- Customisation function taken from MiniPick documentation
+-- Make `:Pick files` accept `cwd` arg
+MiniPick.registry.files = function(local_opts)
+  local opts = { source = { cwd = local_opts.cwd } }
+  local_opts.cwd = nil
+  return MiniPick.builtin.files(local_opts, opts)
+end
 -- Manage and expand snippets (templates for a frequently used text).
 -- Typical workflow is to type snippet's (configurable) prefix and expand it
 -- into a snippet session.
