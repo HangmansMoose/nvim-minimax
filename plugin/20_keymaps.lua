@@ -58,7 +58,7 @@ Config.leader_group_clues = {
   { mode = 'n', keys = '<Leader>m', desc = '+Map' },
   { mode = 'n', keys = '<Leader>o', desc = '+Other' },
   { mode = 'n', keys = '<Leader>s', desc = '+Search' },
-  { mode = 'n', keys = '<Leader>t', desc = '+Terminal' },
+  { mode = 'n', keys = '<Leader>t', desc = '+Trouble' },
   { mode = 'n', keys = '<Leader>v', desc = '+Visits' },
 
   { mode = 'x', keys = '<Leader>g', desc = '+Git' },
@@ -225,8 +225,8 @@ nmap_leader('sR', '<Cmd>lua MiniSessions.restart()<CR>',        'Restart')
 nmap_leader('sw', '<Cmd>lua MiniSessions.write()<CR>',          'Write current')
 
 -- t is for 'Terminal'
-nmap_leader('tT', '<Cmd>horizontal term<CR>', 'Terminal (horizontal)')
-nmap_leader('tt', '<Cmd>vertical term<CR>',   'Terminal (vertical)')
+--map_leader('tT', '<Cmd>horizontal term<CR>', 'Terminal (horizontal)')
+--nmap_leader('tt', '<Cmd>vertical term<CR>',   'Terminal (vertical)')
 
 -- v is for 'Visits'. Common usage:
 -- - `<Leader>vv` - add    "core" label to current file.
@@ -281,6 +281,13 @@ vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 -- Update plugins
 nmap_leader('pu', '<Cmd>lua vim.pack.update()<CR>', 'Update all plugins')
+nmap_leader('d', '<Cmd>lua vim.diagnostic.setloclist()<CR>', 'show diagnostics in qflist')
+
+-- Trouble
+nmap_leader('tt', '<Cmd>Trouble diagnostics toggle<CR>', 'Toggle Trouble')
+nmap_leader('tq', '<Cmd>Trouble qflist toggle<CR>', 'Toggle Trouble qflist')
+nmap_leader('tl', '<Cmd>Trouble lsp toggle focus=false win.position=below<CR>', 'Toggle Trouble LSP only')
+
 
 -- MiniNofify History in floating window
 vim.keymap.set('n',  '<leader>n', function()
