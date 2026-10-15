@@ -30,8 +30,8 @@ vim.g.colors_name = "threepwood"
 
 local p = {
 	-- Backgrounds
-	bg = "#050505",
-	bg_dark = "#050505",
+	bg = "#000000",
+	bg_dark = "#000000",
 	bg_alt = "#1a1a1d",
 	bg_line = "#050505",
 	bg_float = "#050505",
@@ -68,7 +68,8 @@ local p = {
 
 	syntax = {
 		default = "#dddddd",
-		comment = "#727169", -- overridden (was #af9661)
+		--comment = "#727169", -- overridden (was #af9661)
+		comment = "#6f7b68",
 		string = "#98c379",
 		number = "#819aff",
 		keyword = "#dbad49",

@@ -101,7 +101,7 @@ vim.o.iskeyword = '@,48-57,_,192-255,-' -- Treat dash as `word` textobject part
 vim.o.formatlistpat = [[^\s*[0-9\-\+\*]\+[\.\)]*\s\+]]
 
 -- Built-in completion
-vim.o.complete        = '.,w,b,kspell'                  -- Use less sources
+--vim.o.complete        = '.,w,b,kspell'                  -- Use less sources
 vim.o.completeopt     = 'menuone,noselect,fuzzy,nosort' -- Use custom behavior
 vim.o.completetimeout = 100                             -- Limit sources delay
 
@@ -137,8 +137,10 @@ local diagnostic_opts = {
   signs = { priority = 9999, severity = { min = 'WARN', max = 'ERROR' } },
 
   -- Show all diagnostics as underline (for their messages type `<Leader>ld`)
-  underline = { severity = { min = 'HINT', max = 'ERROR' } },
+  -- underline = { severity = { min = 'HINT', max = 'ERROR' } },
 
+	-- Make them look nicer
+	float = { border = "rounded", source = true },
   -- Show more details immediately for errors on the current line
   virtual_lines = false,
   virtual_text = {
@@ -152,4 +154,18 @@ local diagnostic_opts = {
 
 -- Use `later()` to avoid sourcing `vim.diagnostic` on startup
 Config.later(function() vim.diagnostic.config(diagnostic_opts) end)
+
+vim.o.updatetime = 500  -- delay (ms) before CursorHold fires
+vim.o.winborder = "rounded"  -- Neovim 0.11+
+vim.diagnostic.config({ float = { border = "rounded", source = true } })
+vim.api.nvim_create_autocmd("CursorHold", {
+  callback = function()
+    vim.diagnostic.open_float(nil, {
+      focusable = false,
+      scope = "cursor",  -- or "line"
+      close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
+    })
+  end,
+})
+
 -- stylua: ignore end

@@ -229,16 +229,15 @@ add({
   'https://github.com/blazkowolf/gruber-darker.nvim',
   'https://github.com/rebelot/kanagawa.nvim',
   'https://github.com/54L1M/Oshen.nvim',
-  'https://github.com/oskarnurm/koda.nvim',
 	'https://github.com/metalelf0/kintsugi-nvim',
 	'https://github.com/webhooked/kanso.nvim',
   'https://github.com/alljokecake/naysayer-theme.nvim',
+	'https://github.com/miikanissi/modus-themes.nvim',
 })
 
---now(function() vim.cmd('colorscheme luna') end)
 local colours = require("utils.colors")
-colours.CustomColourscheme("threepwood")
-
+--colours.CustomColourscheme("koda-moss")
+--
 -- TODO: This needs a better place to live. Makes the custom color function available as a command
 vim.api.nvim_create_user_command("Colour", function(args)
       local scheme = args.fargs[1]
@@ -249,4 +248,8 @@ vim.api.nvim_create_user_command("Colour", function(args)
       complete = "color"
     }
 )
+
+require 'colourschemes/koda'
+
+vim.cmd('colorscheme koda-moss')
 
